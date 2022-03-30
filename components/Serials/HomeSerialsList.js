@@ -1,5 +1,5 @@
 import React, { useContext, useRef, useState } from "react";
-import { AuthContext } from "../../App";
+
 import {
   ActivityIndicator,
   Image,
@@ -14,9 +14,11 @@ import { DefaultStyles } from "../../styles/defaultstyles";
 
 import Carousel from "react-native-anchor-carousel";
 import { DARK_BACKGROUND_IMG, DEFAULT_BACKGROUND_IMG, IMG_URI } from "../../Api/apiKey";
+import {useTheme} from "../../providers/ThemeProvider";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 
 const HomeSerialsList = ({ data, name, navigation, isLoading }) => {
-  const { isDarkTheme, screenTheme } = useContext(AuthContext);
+  const { isDarkTheme, screenTheme } = useTheme()
   const title = name === "topData" ? "Лучшие сериалы" : name === "popularData" ? "Сейчас смотрят" : "";
 
   const { width: windowWidth } = useWindowDimensions();
@@ -37,12 +39,12 @@ const HomeSerialsList = ({ data, name, navigation, isLoading }) => {
         >
           <Image source={{ uri: IMG_URI + item.poster_path }} style={theme.carouselImage} />
 
-          {/*<MaterialIcons name="library-add" size={30} color={pressColor} style={theme.carouselIcon} />*/}
-          {/*<MaterialIcons name="remove-red-eye" size={30} color="white" style={{*/}
-          {/*  position: "absolute",*/}
-          {/*  top: 15,*/}
-          {/*  alignSelf: "flex-start", left: 10,*/}
-          {/*}} />*/}
+          <MaterialIcons name="library-add" size={30} color={pressColor} style={theme.carouselIcon} />
+          <MaterialIcons name="remove-red-eye" size={30} color="white" style={{
+            position: "absolute",
+            top: 15,
+            alignSelf: "flex-start", left: 10,
+          }} />
         </TouchableOpacity>
         <Text style={theme.carouselText}>{item.original_name}</Text>
       </View>

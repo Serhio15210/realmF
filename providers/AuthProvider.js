@@ -2,6 +2,12 @@ import React, {useContext, useState, useEffect, useRef, useMemo} from "react";
 import Realm from "realm";
 import app from "../realmApp";
 import {createUser, getCurrentUserData, getCurrentUserLists} from "../controllers/UserController";
+import * as NavigationDefaultTheme from "../pages/styles";
+import * as PaperDefaultTheme from "../pages/styles";
+import * as NavigationDarkTheme from "../pages/styles";
+import * as PaperDarkTheme from "../pages/styles";
+import {DarkThemeStyles} from "../styles/darkstyles";
+import {DefaultStyles} from "../styles/defaultstyles";
 
 
 // Create a new Context object that will be provided to descendants of
@@ -12,6 +18,8 @@ const AuthContext = React.createContext(null);
 // AuthContext value to its descendants. Components under an AuthProvider can
 // use the useAuth() hook to access the auth value.
 const AuthProvider = ({children}) => {
+
+
   const [user, setUser] = useState(app.currentUser);
   const [userData, setUserData] = useState({
     username:'',
@@ -55,7 +63,7 @@ const AuthProvider = ({children}) => {
     // Registering only registers and does not log in.
 
     await app.emailPasswordAuth.registerUser({email, password})
-    // await app.logIn(Realm.Credentials.emailPassword(email, password));
+    await app.logIn(Realm.Credentials.emailPassword(email, password));
     await createUser(username)
 
   };

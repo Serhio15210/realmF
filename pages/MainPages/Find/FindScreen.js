@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { FlatList, SafeAreaView, Text, TextInput, TouchableWithoutFeedback, View } from "react-native";
 
 
@@ -7,7 +7,7 @@ import { FlatList, SafeAreaView, Text, TextInput, TouchableWithoutFeedback, View
 import FilmItem from "../../../components/Films/FilmItem";
 
 import FindActor from "./FindActor";
-import { AuthContext } from "../../../App";
+
 import { DarkThemeStyles } from "../../../styles/darkstyles";
 import { DefaultStyles } from "../../../styles/defaultstyles";
 
@@ -18,6 +18,8 @@ import GetFindInfo from "../../../Api/GetFindInfo";
 import GetSerials from "../../../Api/GetSerials";
 import FindButtons from "./FindButtoms";
 import DropdownScreen from "../../../components/DropdownScreen";
+import {useTheme} from "../../../providers/ThemeProvider";
+import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 
 
 
@@ -26,7 +28,7 @@ const FindScreen = ({ navigation }) => {
   const [serialQuery, setSerialQuery] = useState("");
   const [openTop, setOpenTop] = useState(false);
   const heightTop = openTop ? "auto" : 0;
-  const { screenTheme,isDarkTheme } = useContext(AuthContext);
+  const { screenTheme,isDarkTheme } = useTheme()
   const theme = screenTheme
   let scrollPageRef
 
@@ -115,9 +117,9 @@ const FindScreen = ({ navigation }) => {
           <Text style={{
             textAlign: "center",
             fontSize: 25, color: isDarkTheme ? "#DAA520" : "black",
-          }}>Find by</Text>
-          {/*<FontAwesome5 name={openTop ? "sort-up" : "sort-down"}*/}
-          {/*              style={{ color: isDarkTheme ? "#DAA520" : "black", alignSelf: "center", fontSize: 25 }} />*/}
+          }}>Фильтр</Text>
+          <FontAwesome5 name={openTop ? "sort-up" : "sort-down"}
+                        style={{ color: isDarkTheme ? "#DAA520" : "black", alignSelf: "center", fontSize: 25 }} />
         </View>
       </TouchableWithoutFeedback>
       <View style={{
@@ -149,7 +151,7 @@ const FindScreen = ({ navigation }) => {
           flex: 1,
 
         }}  >
-          <TextInput style={theme.findScreenInput} placeholder={`Enter a movie...`} value={movieQuery}
+          <TextInput style={theme.findScreenInput} placeholder={`Поиск...`} value={movieQuery}
                      onChangeText={text => setMovieQuery(text)}
           >
           </TextInput>
@@ -169,7 +171,7 @@ const FindScreen = ({ navigation }) => {
           flex: 1,
 
         }}  >
-          <TextInput style={theme.findScreenInput} placeholder={`Enter a serial...`} value={serialQuery}
+          <TextInput style={theme.findScreenInput} placeholder={`Поиск...`} value={serialQuery}
                      onChangeText={text => setSerialQuery(text)}
           >
           </TextInput>

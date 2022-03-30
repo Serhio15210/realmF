@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useMemo, useState} from 'react';
 import {
     ActivityIndicator,
     ScrollView,
@@ -7,19 +7,19 @@ import {
     TouchableOpacity,
     View
 } from "react-native";
-import {
-    getUserListById,
-    updateListName
-} from "../../controllers/UserController";
+
 import {IMG_URI, NONAME_IMG} from "../../Api/apiKey";
 import ListPoster from "../../components/Lists/ListPoster";
-import {AuthContext} from "../../App";
+
 import {Avatar, Title} from "react-native-paper";
 import {useAuth} from "../../providers/AuthProvider";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import DeleteModal from "../../components/DetailList/DeleteModal";
 import AddFilmToList from "../../components/DetailList/AddFilmToList";
 import ListFilms from "../../components/DetailList/ListFilms";
+import {useTheme} from "../../providers/ThemeProvider";
+import {getUserListById, updateListName} from "../../controllers/ListController";
+import {getCurrentUserData} from "../../controllers/UserController";
 
 
 
@@ -38,7 +38,7 @@ const DetailList = ({route}) => {
     const [isDelList, setIsDelList] = useState(false)
     const [movieQuery, setMovieQuery] = useState("");
     const [nameQuery, setNameQuery] = useState(listData.name)
-    const {screenTheme, isDarkTheme} = useContext(AuthContext);
+    const {screenTheme, isDarkTheme} = useTheme()
     const {userData, userLists} = useAuth();
     const [page, setPage] = useState(1);
 
@@ -47,25 +47,33 @@ const DetailList = ({route}) => {
             return post.title.toLowerCase().includes(movieQuery.toLowerCase())
         })
 
-    useEffect(async () => {
+    useEffect( async () => {
 
         try {
-            setLoading(true)
+
+
             if (title !== userData.favoriteList.name) {
-                await getUserListById(id).then(data => {
+
+                   await getUserListById(id).then(data => {
+
                     setListData({
                         listId: data[0]?.listId,
                         name: data[0]?.name,
                         films: data[0].films || []
                     })
+
                 })
 
             } else {
-                setListData({
-                    listId: userData.favoriteList.listId,
-                    name: userData.favoriteList.name,
-                    films: userData.favoriteList.films || []
+                 await getCurrentUserData().then(newUserData=>{
+
+
+                  setListData({
+                    listId: newUserData.favoriteList.listId,
+                    name: newUserData.favoriteList.name,
+                    films: newUserData.favoriteList.films || []
                 })
+                 })
             }
 
             setNameQuery(listData.name)
@@ -74,10 +82,17 @@ const DetailList = ({route}) => {
             console.log(error)
         }
 
-    }, [isListChanged]);
+    }, [isListChanged,userData]);
 
 
     return (
+
+            loading ?
+                <View style={{
+                    flex: 1,
+                    justifyContent: "center",
+                }}>
+                    <ActivityIndicator size="large" color={isDarkTheme?"#DAA520":"#DC143C"}/></View> :
         <ScrollView>
             <DeleteModal listId={listData.listId} name={listData.name} isDelList={isDelList}
                          setIsDelList={setIsDelList} />
@@ -87,13 +102,7 @@ const DetailList = ({route}) => {
                     <ListPoster list={title === userData.favoriteList.name ? [] : listData} height={150} width={150}/>
                 </View>
 
-                {
-                    loading ?
-                        <View style={{
-                            flex: 1,
-                            justifyContent: "center",
-                        }}>
-                            <ActivityIndicator size="large" color={isDarkTheme?"#DAA520":"#DC143C"}/></View> :
+
                         <View style={{margin: 10}}>
                             {
                                 isEdit ?
@@ -137,7 +146,7 @@ const DetailList = ({route}) => {
                                         </TextInput>
                                     </View>
                             }
-                        </View>}
+                        </View>
 
                 <View style={{flexDirection: 'row', paddingLeft: 10}}>
                     <Avatar.Image

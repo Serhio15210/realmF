@@ -1,17 +1,18 @@
 import React, {useContext, useRef, useState} from 'react';
 import {Button, FlatList, SafeAreaView, Text, TouchableOpacity, View} from "react-native";
-import {AuthContext} from "../../App";
+
 import {useNavigation} from "@react-navigation/native";
 import {useAuth} from "../../providers/AuthProvider";
 import MyListItem from "../../components/Lists/MyListItem";
 import ListPoster from "../../components/Lists/ListPoster";
+import {useTheme} from "../../providers/ThemeProvider";
 
 const MyLists = () => {
     const [isScroll, setIsScroll] = useState(false);
     const {userLists,userData}=useAuth()
     const navigation=useNavigation()
     let listRef;
-    const {screenTheme } = useContext(AuthContext);
+    const {screenTheme } = useTheme();
      // const ref = useRef(null);
     // const TopButtonHandler = () => {
     //     listRef.scrollToOffset({ offset: 0, animated: true });

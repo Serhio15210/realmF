@@ -1,12 +1,13 @@
 import React, {useContext} from 'react';
 import {Image, Text, TouchableHighlight, TouchableOpacity, View} from "react-native";
 import {DefaultStyles} from "../styles/defaultstyles";
-import {AuthContext} from "../App";
+
 import {DarkThemeStyles} from "../styles/darkstyles";
 import {IMG_URI, NONAME_IMG} from "../Api/apiKey";
+import {useTheme} from "../providers/ThemeProvider";
 
 const ActorItem = ({item,navigation,actorFilms}) => {
-    const {isDarkTheme}=useContext(AuthContext)
+    const {isDarkTheme}=useTheme()
     const theme=isDarkTheme?DarkThemeStyles:DefaultStyles
     return (
         <TouchableOpacity key={item.id} onPress={()=>navigation.navigate("ActorsInfo",{id:item.id,navigation:navigation,data:actorFilms})}>

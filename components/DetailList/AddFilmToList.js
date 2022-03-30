@@ -1,15 +1,18 @@
 import React, {useContext, useEffect, useMemo, useState} from 'react';
 import {ActivityIndicator, Alert, FlatList, Modal, Text, TextInput, TouchableOpacity, View} from "react-native";
 import FilmItem from "../Films/FilmItem";
-import {addFilmToFavoriteList, addFilmToList} from "../../controllers/UserController";
+import {addFilmToFavoriteList, addFilmToList} from "../../controllers/ListController";
 import FindButtons from "../../pages/MainPages/Find/FindButtoms";
-import {AuthContext} from "../../App";
+
 import GetFindInfo from "../../Api/GetFindInfo";
 import {useNavigation} from "@react-navigation/native";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import AntDesign from "react-native-vector-icons/AntDesign";
+import {useTheme} from "../../providers/ThemeProvider";
 
 const AddFilmToList = ({setIsAddFilm, isAddFilm, setIsListChanged, userData, listData, title,isList,setListData}) => {
     const [searchQuery, setSearchQuery] = useState("");
-    const {screenTheme, isDarkTheme} = useContext(AuthContext);
+    const {screenTheme, isDarkTheme} = useTheme()
     const [isLoading, setIsLoading] = useState(false)
     const [page, setPage] = useState(1);
     const [state, setState] = useState([]);
@@ -57,12 +60,12 @@ const AddFilmToList = ({setIsAddFilm, isAddFilm, setIsListChanged, userData, lis
 
             :
             newFilms.map(async film => {
-                await addFilmToFavoriteList(userData.favoriteList.listId, film)
-            })
-    }
-    useMemo(() => {
 
-    }, [newFilms])
+                await addFilmToFavoriteList(userData.favoriteList, film)
+            })
+
+    }
+
     return (
         <Modal
             animationType="slide"
@@ -88,10 +91,10 @@ const AddFilmToList = ({setIsAddFilm, isAddFilm, setIsListChanged, userData, lis
                             backgroundColor: isDarkTheme ? "black" : "white"
                         }
                     }}
-                                      onPress={async () => {
+                                      onPress={ () => {
+
                                           if (newFilms.length !== 0) {
-                                              isList?addFilmsToOldList():
-                                                  setListData([...listData,...newFilms])
+                                              isList?addFilmsToOldList(): setListData([...listData,...newFilms])
 
                                               setIsListChanged(true)
                                           }
@@ -141,8 +144,11 @@ const AddFilmToList = ({setIsAddFilm, isAddFilm, setIsListChanged, userData, lis
 
                                               }}
                                           >
-                                              <Text
-                                                  style={screenTheme.detailListButtonsText}>{ifFilmWasAddedToNewList(item.id) ? "Added" : "Add"}</Text>
+
+                                              {ifFilmWasAddedToNewList(item.id) ?
+                                                  <AntDesign name="checksquare" size={30}/>:
+                                              <Ionicons name="add-circle-outline" size={30}/>
+                                               }
                                           </TouchableOpacity>
                                       </View>
                                   )

@@ -9,13 +9,15 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { AuthContext } from "../../App";
+
 
 import { AirbnbRating } from "react-native-ratings";
 import { API_KEY, IMG_URI, NONAME_IMG } from "../../Api/apiKey";
 
 import GetSerials from "../../Api/GetSerials";
 import { useNavigationState } from "@react-navigation/native";
+import {useTheme} from "../../providers/ThemeProvider";
+import {FilmPeople, SimilarFilms} from "./DetailFilm";
 
 const DetailSerial = ({ route }) => {
   const [isLoading, setLoading] = useState(true);
@@ -38,7 +40,7 @@ const DetailSerial = ({ route }) => {
   const [crew, setCrew] = useState([]);
   const [reviews, setReviews] = useState([]);
 
-  const { screenTheme } = useContext(AuthContext);
+  const { screenTheme,isDarkTheme } = useTheme()
   const details = screenTheme
 
   const { id, navigation, title } = route.params;
@@ -118,15 +120,27 @@ const DetailSerial = ({ route }) => {
 
       </View>
       <View style={details.mainDetailView}>
-        <Text style={details.name}>
-          {state.selected.original_name}
-        </Text>
+          <View style={{flexDirection: 'row', justifyContent: 'space-around' }}>
+              <View style={{flexDirection: 'column', justifyContent: 'space-around',alignItems:'center'}}>
+                  <Text style={{...details.name, ...{marginTop: 10}}}>
+
+                      {state.selected.name}
+                  </Text>
+
+                  <Text style={ details.name} >
+
+                      ({state.selected.original_name})
+                  </Text>
+
+              </View>
+
+          </View>
         <View style={{ padding: 20, paddingTop: 10 }}>
           <View style={{
             alignItems: "center",
             justifyContent: "center",
           }}>
-            <Text style={{ ...details.text, ...{ fontSize: 20 } }}>Ratings:{"\n"}</Text>
+            <Text style={{ ...details.text, ...{ fontSize: 20 } }}>Рейтинг:{"\n"}</Text>
             {isLoading?
               <View style={{flex: 1,
                 justifyContent: "center"}}>
@@ -137,21 +151,22 @@ const DetailSerial = ({ route }) => {
               <Text>{rat.Value}{"\n"}</Text>
             </>))}</Text>}
           </View>
-          <View style={{
+            <View style={{
 
-            borderBottomWidth: 2,
-            marginBottom: 10,
-          }}>
-            <Text style={{ ...details.text, ...{ fontSize: 20, alignSelf: "center" } }}>Users
-              rate: <Text>{state.selected.vote_average}</Text></Text>
-            <AirbnbRating
-              count={10}
-              reviews={["Terrible", "Bad", "Meh", "OK", "Good", "Hmm...", "Good", "Wow", "Amazing", "Masterpiece!!!"]}
-              defaultRating={Math.round(state.selected.vote_average)}
-              size={20}
-              isDisabled
-            />
-          </View>
+                borderBottomWidth: 2,
+                marginBottom: 10,
+                borderColor: isDarkTheme ? "#DAA520" : "white"
+            }}>
+                <Text style={{...details.text, ...{fontSize: 20, alignSelf: "center"}}}>Рейтинг
+                    зрителей: <Text>{state.selected.vote_average}</Text></Text>
+                <AirbnbRating
+                    count={10}
+                    reviews={["Ужасно!", "Плохо(", "Такое...", "OK", "Нормально", "Неплохой", "Хороший", "Вау!", "Потрясающий!", "Шедевр!!!"]}
+                    defaultRating={Math.round(state.selected.vote_average)}
+                    size={20}
+                    isDisabled
+                />
+            </View>
           <Text style={{ ...details.text, ...{ alignSelf: "center" } }}>
             {state.selected.last_air_date}({state.studio.map(x => x)} min/episode)
             </Text>
@@ -160,19 +175,19 @@ const DetailSerial = ({ route }) => {
             <Text>{rat.name} / </Text>
 
           </>))}</Text></Text>
-          <Text style={{ ...details.text, ...{ alignSelf: "center",top:20 } }}>Seasons: <Text
+          <Text style={{ ...details.text, ...{ alignSelf: "center",top:20 } }}>К-ство сезонов: <Text
             style={details.text}>{state.selected.number_of_seasons }</Text></Text>
-          <Text style={{ ...details.text, ...{ alignSelf: "center",top:30,marginBottom:20 } }}>Episodes: <Text
+          <Text style={{ ...details.text, ...{ alignSelf: "center",top:30,marginBottom:20 } }}>К-ство эпизодов: <Text
             style={details.text}>{state.selected.number_of_episodes }</Text></Text>
 
           <View style={{ padding: 20 }}>
             <Text style={details.text}>{state.selected.tagline}{"\n\n"}</Text>
-            <Text><Text style={{ ...details.text, ...{ fontSize: 20 } }}>Overview:{"\n\n"}</Text><Text
+            <Text><Text style={{ ...details.text, ...{ fontSize: 20 } }}>О сериале:{"\n\n"}</Text><Text
               style={details.text}>{state.selected.overview}</Text></Text>
           </View>
 
           <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-            <Text style={details.text}>Countries:{"\n"}<Text
+            <Text style={details.text}>Страны:{"\n"}<Text
               style={details.text}>{state.countries.map(rat => (<>
               <Text>  {rat}{"\n"} </Text>
 
@@ -183,128 +198,32 @@ const DetailSerial = ({ route }) => {
         </View>
 
       </View>
-      <View style={{ padding: 20 }}>
-        {crew.filter(item => item.job === "Screenplay" || item.job === "Director" || item.job === "Producer" || item.job === "Original Music Composer").length!==0&&  <Text style={details.titles}>Directors and Writers: </Text>
-        }
+        <FilmPeople cast={cast} crew={crew} navigation={navigation}/>
+      {reviews.length!==0&&
+          <View style={details.detailReviews}>
+            <View style={{padding: 10}}>
+              <Text style={{...details.text, ...{fontSize: 20, alignSelf: "center"}}}>Рецензии:</Text>
+              <View style={{height: "auto"}}>
+                {
+                  reviews.map((review, index) => (
 
-        <FlatList
-          style={{ marginBottom: 30 }}
-          horizontal={true}
-          data={crew.filter(item => item.job === "Screenplay" || item.job === "Director" || item.job === "Producer" || item.job === "Original Music Composer")}
-          renderItem={({ item }) => {
-            return (
-              <TouchableOpacity style={
-                details.detailCast
-                // Required to show shadows on Android for some reason !?!?
-              }
-                                onPress={() => navigation.navigate("ActorsInfo", {
-                                  id: item.id,
-                                  navigation: navigation,
-                                })}>
-                <Image source={item.profile_path ? { uri: IMG_URI + item.profile_path } : { uri: NONAME_IMG }}
-                       style={{
-                         height: 150,
-                         width: 130,
-                         borderTopRightRadius: 5,
-                         borderTopLeftRadius: 5,
-                       }} />
+                      <TouchableOpacity style={details.textReviews}>
+                        <View style={{flexDirection: "row"}}>
+                          <Text style={{...details.textActors, ...{fontSize: 18}}}>{review.author}</Text>
+                        </View>
 
+                        <Text style={details.textActors}>{
+                          ((review.content).length > 100) ?
+                              (((review.content).substring(0, 100 - 3)) + "...") :
+                              review.content}</Text>
 
-                <Text style={{ ...details.textActors, ...{ padding: 10 } }}>{item.original_name}</Text>
-                <Text style={{ ...details.textActors, ...{ padding: 10 } }}>{item.job}</Text>
-              </TouchableOpacity>
-            );
-          }}
-        />
-        <Text style={details.titles}>Cast:</Text>
-        <FlatList
-          style={{ marginBottom: 30 }}
-          horizontal={true}
-          data={cast}
-          renderItem={({ item }) => {
-            return (
-              <TouchableOpacity style={details.detailCast}
-                                onPress={() => {
+                      </TouchableOpacity>
+                  ))}
 
-                                  navigation.push("ActorsInfo", {
-                                    id: item.id,
-                                    navigation: navigation,
-                                  });
-                                }}>
-                <Image source={item.profile_path ? { uri: IMG_URI + item.profile_path } : { uri: NONAME_IMG }}
-                       style={{
-                         height: 150,
-                         width: 130,
-                         borderTopRightRadius: 5,
-                         borderTopLeftRadius: 5,
-                       }} />
-
-
-                <Text style={{ ...details.textActors, ...{ padding: 10 } }}>{item.original_name}</Text>
-                <Text style={{ ...details.textActors, ...{ padding: 10 } }}>{item.character}</Text>
-              </TouchableOpacity>
-            );
-          }}
-        />
-
-      </View>
-      <View style={details.detailReviews}>
-        <View style={{ padding: 10 }}>
-          <Text style={{ ...details.text, ...{ fontSize: 20, alignSelf: "center" } }}>Reviews:</Text>
-          <View style={{ height: "auto" }}>
-            {
-              reviews.map((review, index) => (
-
-                <TouchableOpacity style={details.textReviews}>
-                  <View style={{ flexDirection: "row" }}>
-                    <Text style={{ ...details.textActors, ...{ fontSize: 18 } }}>{review.author}</Text>
-                  </View>
-
-                  <Text style={details.textActors}>{
-                    ((review.content).length > 100) ?
-                      (((review.content).substring(0, 100 - 3)) + "...") :
-                      review.content}</Text>
-
-                </TouchableOpacity>
-              ))}
-
-          </View>
-        </View>
-      </View>
-      <View style={{ padding: 20 }}>
-
-
-        <Text style={details.titles}>Similar serials:</Text>
-        <FlatList
-          style={{ marginBottom: 30 }}
-          horizontal={true}
-          data={similarSerials}
-          renderItem={({ item }) => {
-            return (
-              <TouchableOpacity style={details.similarFilms} onPress={() => navigation.push("DetailSerial", {
-                id: item.id,
-                navigation: navigation,title:item.original_name
-              })}>
-                <ImageBackground source={{ uri: "https://image.tmdb.org/t/p/original" + item.poster_path }}
-                                 style={{
-                                   width: 220,
-                                   height: 220,
-                                   borderTopRightRadius: 5,
-                                   borderTopLeftRadius: 5,
-                                   backgroundSize: "cover",
-                                   backgroundPositionX: "50%",
-                                   backgroundPositionY: "50%",
-                                 }} />
-
-
-                <Text style={details.text}>{item.name}</Text>
-
-              </TouchableOpacity>
-            );
-          }}
-        />
-      </View>
-
+              </View>
+            </View>
+          </View>}
+      <SimilarFilms similarFilms={similarSerials} navigation={navigation} isSerial={true}/>
     </ScrollView>
 
   )

@@ -4,7 +4,7 @@ export default class GetFindInfo {
 
   static async getFilmsByQuery(page,movieQuery) {
     try {
-      const response = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&language=en-US&query=${movieQuery}&page=${page}`)
+      const response = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&language=ru&query=${movieQuery}&page=${page}`)
       const premiereData = await response.json();
 
       return premiereData;
@@ -15,7 +15,7 @@ export default class GetFindInfo {
   }
   static async getSerialsByQuery(page,serialQuery) {
     try {
-      const response = await fetch(`https://api.themoviedb.org/3/search/tv?api_key=${API_KEY}&language=en-US&query=${serialQuery}&page=${page}`)
+      const response = await fetch(`https://api.themoviedb.org/3/search/tv?api_key=${API_KEY}&language=ru&query=${serialQuery}&page=${page}`)
       const premiereData = await response.json();
 
       return premiereData;

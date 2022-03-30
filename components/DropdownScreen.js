@@ -5,85 +5,86 @@ import {Dropdown, MultiSelect} from 'react-native-element-dropdown';
 import AntDesign from "react-native-vector-icons/AntDesign";
 import {API_KEY} from "../Api/apiKey";
 import {RadioButton} from "react-native-paper";
-import {AuthContext} from "../App";
+
+import {useTheme} from "../providers/ThemeProvider";
 
 
 const data = [
     {
         "id": 28,
-        "name": "Action"
+        "name": "боевик"
     },
     {
         "id": 12,
-        "name": "Adventure"
+        "name": "приключения"
     },
     {
         "id": 16,
-        "name": "Animation"
+        "name": "мультфильм"
     },
     {
         "id": 35,
-        "name": "Comedy"
+        "name": "комедия"
     },
     {
         "id": 80,
-        "name": "Crime"
+        "name": "криминал"
     },
     {
         "id": 99,
-        "name": "Documentary"
+        "name": "документальный"
     },
     {
         "id": 18,
-        "name": "Drama"
+        "name": "драма"
     },
     {
         "id": 10751,
-        "name": "Family"
+        "name": "семейный"
     },
     {
         "id": 14,
-        "name": "Fantasy"
+        "name": "фэнтези"
     },
     {
         "id": 36,
-        "name": "History"
+        "name": "история"
     },
     {
         "id": 27,
-        "name": "Horror"
+        "name": "ужасы"
     },
     {
         "id": 10402,
-        "name": "Music"
+        "name": "музыка"
     },
     {
         "id": 9648,
-        "name": "Mystery"
+        "name": "детектив"
     },
     {
         "id": 10749,
-        "name": "Romance"
+        "name": "мелодрама"
     },
     {
         "id": 878,
-        "name": "Science Fiction"
+        "name": "фантастика"
     },
     {
         "id": 10770,
-        "name": "TV Movie"
+        "name": "телевизионный фильм"
     },
     {
         "id": 53,
-        "name": "Thriller"
+        "name": "триллер"
     },
     {
         "id": 10752,
-        "name": "War"
+        "name": "военный"
     },
     {
         "id": 37,
-        "name": "Western"
+        "name": "вестерн"
     }
 ];
 
@@ -93,7 +94,7 @@ const DropdownScreen = ({navigation, filter, setFilter, setOpenTop,setPage}) => 
     const [checked, setChecked] = useState('not see');
     const [findCheck, setFindCheck] = useState(filter["movieIsOn"]?'name':filter["serialIsOn"]?'serial':filter["actorsMovieIsOn"]?'actor':'name');
     const [selectedYear, setSelectedYear] = useState([]);
-    const {isDarkTheme} = useContext(AuthContext)
+    const {isDarkTheme} = useTheme()
     const theme = isDarkTheme ? DarkStyles : styles
     let years = []
     for (let i = new Date().getFullYear(); i >= 1881; i--) {
@@ -116,7 +117,7 @@ const DropdownScreen = ({navigation, filter, setFilter, setOpenTop,setPage}) => 
             <View style={{flexDirection: "row", justifyContent: "center"}}>
 
                 <View style={{flexDirection: "row", alignItems: "center"}}>
-                    <Text style={{color: isDarkTheme ? "white" : "black"}}>Movie</Text>
+                    <Text style={{color: isDarkTheme ? "white" : "black"}}>Фильм</Text>
                     <RadioButton value="name"
                                  status={findCheck === 'name' ? 'checked' : 'unchecked'}
                                  onPress={() => {
@@ -124,7 +125,7 @@ const DropdownScreen = ({navigation, filter, setFilter, setOpenTop,setPage}) => 
                                      setFilter({movieIsOn: true,serialIsOn:false, actorsMovieIsOn: false})
                                      setPage(1)
                                  }} color={isDarkTheme ? "#DAA520" : "#DC143C"}  uncheckedColor={isDarkTheme ? "white" : "black"}/>
-                    <Text style={{color: isDarkTheme ? "white" : "black"}}>Serial</Text>
+                    <Text style={{color: isDarkTheme ? "white" : "black"}}>Сериал</Text>
                     <RadioButton value="serial"
                                  status={findCheck === 'serial' ? 'checked' : 'unchecked'}
                                  onPress={() => {
@@ -132,7 +133,7 @@ const DropdownScreen = ({navigation, filter, setFilter, setOpenTop,setPage}) => 
                                      setFilter({movieIsOn: false,serialIsOn:true, actorsMovieIsOn: false})
                                      setPage(1)
                                  }} color={isDarkTheme ? "#DAA520" : "#DC143C"}  uncheckedColor={isDarkTheme ? "white" : "black"}/>
-                    <Text style={{color: isDarkTheme ? "white" : "black"}}>Actors</Text>
+                    <Text style={{color: isDarkTheme ? "white" : "black"}}>Актёр</Text>
                     <RadioButton value="actor"
                                  status={findCheck === 'actor' ? 'checked' : 'unchecked'}
                                  onPress={() => {
@@ -140,37 +141,11 @@ const DropdownScreen = ({navigation, filter, setFilter, setOpenTop,setPage}) => 
                                      setFilter({movieIsOn: false, serialIsOn:false,actorsMovieIsOn: true})
                                      setPage(1)
                                  }} color={isDarkTheme ? "#DAA520" : "#DC143C"}  uncheckedColor={isDarkTheme ? "white" : "black"}/>
-                    {/*<Text style={{color: isDarkTheme ? "white" : "black"}}>Directors</Text>*/}
-                    {/*<RadioButton value="actor"*/}
-                    {/*             status={findCheck === 'actor' ? 'checked' : 'unchecked'}*/}
-                    {/*             onPress={() => {*/}
-                    {/*                 setFindCheck('actor')*/}
-                    {/*                 setFilter({movieIsOn: false, actorsIsOn: true})*/}
-                    {/*             }} color={isDarkTheme ? "#DAA520" : "#DC143C"}  uncheckedColor={isDarkTheme ? "white" : "black"}/>*/}
+
                 </View>
 
             </View>
-            <View style={{
-                paddingBottom: 10,
-                marginBottom: 20,
-                width: "100%",
-                textColor: "black",
-                borderBottomWidth: 2,
-                borderTopWidth: 2,
-                borderColor: isDarkTheme ? "#DAA520" : "#DC143C"
-            }}>
-                <Text style={{fontSize: 15, color: isDarkTheme ? "white" : "black"}}>Show me:{"\n"}</Text>
-                <RadioButton.Group onValueChange={newValue => setChecked(newValue)} value={checked}>
-                    <View style={{flexDirection: "row", alignItems: "center"}}>
-                        <Text style={{color: isDarkTheme ? "white" : "black"}}>Films which i did not see</Text>
-                        <RadioButton value="first" color={isDarkTheme ? "#DAA520" : "#DC143C"}  uncheckedColor={isDarkTheme ? "white" : "black"}/>
-                    </View>
-                    <View style={{flexDirection: "row", alignItems: "center"}}>
-                        <Text style={{color: isDarkTheme ? "white" : "black"}}>Films which i have already seen</Text>
-                        <RadioButton value="second" color={isDarkTheme ? "#DAA520" : "#DC143C"}  uncheckedColor={isDarkTheme ? "white" : "black"}/>
-                    </View>
-                </RadioButton.Group>
-            </View>
+
             <View style={{paddingBottom: 20}}>
                 <MultiSelect
                     style={theme.dropdown}
@@ -182,10 +157,10 @@ const DropdownScreen = ({navigation, filter, setFilter, setOpenTop,setPage}) => 
                     activeColor={isDarkTheme ? "#DAA520" : "#DC143C"}
                     labelField="name"
                     valueField="name"
-                    placeholder="Select year"
+                    placeholder="Выберите год"
                     value={selectedYear}
                     search
-                    searchPlaceholder="Search..."
+                    searchPlaceholder="Поиск..."
                     onChange={item => {
                         setSelectedYear(item);
                     }}
@@ -220,10 +195,10 @@ const DropdownScreen = ({navigation, filter, setFilter, setOpenTop,setPage}) => 
 
                     labelField="name"
                     valueField="id"
-                    placeholder="Select genre"
+                    placeholder="Выбрать жанр"
                     value={selected}
                     search
-                    searchPlaceholder="Search..."
+                    searchPlaceholder="Поиск..."
                     onChange={item => {
                         setSelected(item);
                     }}
@@ -246,7 +221,7 @@ const DropdownScreen = ({navigation, filter, setFilter, setOpenTop,setPage}) => 
                     )}
                 />
             </View>
-            <Button title="Search" color={isDarkTheme?"#DAA520":"#DC143C"} onPress={() => {
+            <Button title="Поиск" color={isDarkTheme?"#DAA520":"#DC143C"} onPress={() => {
                 selected.length !== 0 || selectedYear.length !== 0 ?
                   filter["serialIsOn"]?
                     navigation.navigate("SerialsByFilter", {

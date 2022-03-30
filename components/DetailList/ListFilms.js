@@ -1,10 +1,11 @@
 import React, {useContext} from 'react';
 import {ActivityIndicator, Image, Text, TouchableOpacity, View} from "react-native";
 import {IMG_URI, NONAME_IMG} from "../../Api/apiKey";
-import {AuthContext} from "../../App";
+
+import {useTheme} from "../../providers/ThemeProvider";
 
 const ListFilms = ({filteredFilms,setListData,listData}) => {
-    const { screenTheme,isDarkTheme } = useContext(AuthContext);
+    const { screenTheme,isDarkTheme } = useTheme();
     return (
     <View style={{flex:1}}>
         {filteredFilms.length===0 ? <View style={{alignSelf:'center'}}><Text style={{fontSize:30,color:isDarkTheme?"#666":"black"}}>List is empty...</Text></View>

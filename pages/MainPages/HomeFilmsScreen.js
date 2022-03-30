@@ -1,43 +1,23 @@
 import React, {useCallback, useContext, useEffect, useMemo, useRef, useState} from "react";
 import {
-    ActivityIndicator,
+      LogBox, RefreshControl,
 
-    Button, Dimensions, FlatList, ImageBackground, LogBox, RefreshControl,
-
-    ScrollView, TextInput, TouchableOpacity,
+    ScrollView ,
 
     View,
 } from "react-native";
 import {
-    SafeAreaView,
-    StyleSheet,
-    Text,
-    Pressable,
-    Animated,
+
     useWindowDimensions,
     Image,
     StatusBar,
 } from "react-native";
 
-const images = new Array(6).fill("https://images.unsplash.com/photo-1556740749-887f6717d7e4");
 
 import HomeFilmsList from "../../components/Films/HomeFilmsList";
-import {
-    ADD_LIST_IMG,
-    API_KEY,
-    DARK_BACKGROUND_IMG,
-    DEFAULT_BACKGROUND_IMG,
-    FAVORITE_LIST_IMG,
-    IMG_URI
-} from "../../Api/apiKey";
-import GetFilms  from "../../Api/GetFilms";
-import { DarkThemeStyles } from "../../styles/darkstyles";
-import { DefaultStyles } from "../../styles/defaultstyles";
-import { AuthContext } from "../../App";
 
-import {CommonActions, useFocusEffect} from "@react-navigation/native";
-import ListPoster from "../../components/Lists/ListPoster";
-import {getCurrentUserData, getCurrentUserLists} from "../../controllers/UserController";
+import GetFilms  from "../../Api/GetFilms";
+
 import {useAuth} from "../../providers/AuthProvider";
 import MyHomeLists from "../../components/Lists/MyHomeLists";
 
@@ -50,8 +30,7 @@ const HomeFilmsScreen = ({ navigation }) => {
     const [soonData, setSoonData] = useState([]);
     const [premierData, setPremierData] = useState([]);
     const [popularData, setPopularData] = useState([]);
-
-    const {signOut, userData, setUserData,setUserLists,userLists} = useAuth();
+    const componentMounted = useRef(true)
     const [refreshing, setRefreshing] = React.useState(false);
     const [isLoading, setLoading] = useState(true);
     // const [userData,setUserData ] = useState({
@@ -100,7 +79,9 @@ const HomeFilmsScreen = ({ navigation }) => {
             setLoading(false)
         }
 
-
+        return () => { // This code runs when component is unmounted
+            componentMounted.current = false; // (4) set it to false when we leave the page
+        }
 
     }, []);
     const { width: windowWidth } = useWindowDimensions();

@@ -10,23 +10,25 @@ import {
     TouchableOpacity,
     View
 } from "react-native";
-import {AuthContext} from "../../App";
+
 import AntDesign from "react-native-vector-icons/AntDesign";
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon from "react-native-vector-icons/FontAwesome"
 import FilmItem from "../Films/FilmItem";
 import GetFindInfo from "../../Api/GetFindInfo";
 import {useNavigation} from "@react-navigation/native";
 import FindButtons from "../../pages/MainPages/Find/FindButtoms";
 import {IMG_URI, NONAME_IMG} from "../../Api/apiKey";
-import {createListForUser} from "../../controllers/UserController";
+import {createListForUser} from "../../controllers/ListController";
 import AddFilmToList from "../DetailList/AddFilmToList";
 import {useAuth} from "../../providers/AuthProvider";
 import ListFilms from "../DetailList/ListFilms";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import {useTheme} from "../../providers/ThemeProvider";
 
 const AddList = () => {
 
 
-    const {screenTheme, isDarkTheme} = useContext(AuthContext);
+    const {screenTheme, isDarkTheme} = useTheme();
     const theme = screenTheme
     const [editName, setEditName] = useState(true)
     const [isAddFilm, setIsAddFilm] = useState(false)
@@ -65,8 +67,8 @@ const AddList = () => {
                            onChangeText={text => setNameQuery(text)} editable={editName}>
 
                 </TextInput>
-                <TouchableOpacity onPress={() => setEditName(true)}>
-                    <Icon name="delete" size={30} color="#900"/>
+                <TouchableOpacity onPress={() => setEditName(true)} style={{marginRight:10,marginLeft:10,alignSelf:'center'}}>
+                    <Icon name="edit" size={40} color="#DC143C"/>
 
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => {
@@ -78,7 +80,7 @@ const AddList = () => {
                     }
 
                 }}>
-                    <Icon name="database-edit" size={30} color="#900"/>
+                    <Icon name="save" size={40} color="#DC143C"/>
                 </TouchableOpacity>
 
             </View>
@@ -95,7 +97,7 @@ const AddList = () => {
                                   onPress={ () => {
                                        setIsEdit(true)
                                   }}>
-                    <Text style={screenTheme.detailListButtonsText}>Edit</Text>
+                    <AntDesign name="edit" size={20}/>
                 </TouchableOpacity>
             {
                 isLoadingSave ?
@@ -121,7 +123,7 @@ const AddList = () => {
                                           }
 
                                       }}>
-                        <Text style={screenTheme.detailListButtonsText}>Save</Text>
+                        <MaterialIcons size={20} name="save-alt"/>
                     </TouchableOpacity>
 
             }

@@ -2,15 +2,16 @@ import React, {useContext, useState} from 'react';
 import {Image, ImageBackground, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from "react-native";
 import {DARK_BACKGROUND_IMG, DEFAULT_BACKGROUND_IMG, IMG_URI, NONAME_IMG} from "../Api/apiKey";
 import {useAuth} from "../providers/AuthProvider";
-import {AuthContext} from "../App";
+
 import {DefaultStyles} from "../styles/defaultstyles";
 import ListPoster from "../components/Lists/ListPoster";
 import {useNavigation} from "@react-navigation/native";
 import EditProfile from "../components/EditProfile";
+import {useTheme} from "../providers/ThemeProvider";
 
 const Profile = () => {
     const {userData, userLists} = useAuth();
-    const { isDarkTheme } = useContext(AuthContext);
+    const { isDarkTheme } = useTheme()
     const [isEdit,setIsEdit]=useState(false)
     const navigation=useNavigation()
     return (

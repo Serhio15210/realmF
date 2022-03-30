@@ -3,13 +3,14 @@ import {ActivityIndicator, Image, Modal, Text, TextInput, TouchableOpacity, View
 import {NONAME_IMG} from "../Api/apiKey";
 import {useAuth} from "../providers/AuthProvider";
 import {editUser, updateListName} from "../controllers/UserController";
-import {AuthContext} from "../App";
+import {useTheme} from "../providers/ThemeProvider";
+
 
 const EditProfile = ({isEdit,setIsEdit}) => {
     const {userData,setUserData} = useAuth();
     const [nameQuery,setNameQuery]=useState(userData.username+'')
     const [isLoading,setIsLoading]=useState(false)
-    const { screenTheme,isDarkTheme } = useContext(AuthContext);
+    const { screenTheme,isDarkTheme } = useTheme()
     return (
         <Modal
             animationType="slide"

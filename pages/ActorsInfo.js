@@ -1,19 +1,32 @@
 import React, { useContext, useEffect, useState } from "react";
-import { FlatList, Image, ImageBackground, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { AuthContext } from "../App";
+import {
+    ActivityIndicator,
+    FlatList,
+    Image,
+    ImageBackground,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View
+} from "react-native";
+
 
 import GetActorsInfo from "../Api/GetActorsInfo";
 import { IMG_URI } from "../Api/apiKey";
+import {useTheme} from "../providers/ThemeProvider";
 
 
 const ActorsInfo = ({ route }) => {
   const { id, data, navigation } = route.params;
   const [actorInfo, setActorInfo] = useState({});
   const [actorFilms, setActorFilms] = useState([]);
+  const [isLoading, setLoading] = useState(false);
   const [directorFilms, setDirectorFilms] = useState([]);
-  const { isDarkTheme, screenTheme } = useContext(AuthContext);
+  const { isDarkTheme, screenTheme } = useTheme();
   const details = screenTheme;
   useEffect(async () => {
+      setLoading(true)
     await GetActorsInfo.getActorsInfo(id).then((response) => {
       setActorInfo(response);
 
@@ -23,9 +36,15 @@ const ActorsInfo = ({ route }) => {
       setActorFilms(data2.cast);
       setDirectorFilms(data2.crew);
     });
-
+    setLoading(false)
   }, []);
   return (
+      isLoading ?
+          <View style={{
+              flex: 1,
+              justifyContent: "center",
+          }}>
+              <ActivityIndicator size="large" color="red"/></View>:
     <ScrollView>
       <View style={{ padding: 20 }}>
         <Image source={{ uri: IMG_URI + actorInfo.profile_path }} style={{
@@ -56,7 +75,7 @@ const ActorsInfo = ({ route }) => {
             return (
               <TouchableOpacity style={details.actorsFilms} onPress={() => navigation.push("DetailFilm", {
                 id: item.id,
-                navigation: navigation,
+                navigation: navigation,title: item.title
               })}>
                 <ImageBackground source={{ uri: IMG_URI + item.poster_path }}
                                  style={{
@@ -70,7 +89,7 @@ const ActorsInfo = ({ route }) => {
                                  }} />
 
 
-                <Text style={details.text}>{item.original_title}</Text>
+                <Text style={details.text}>{item.title}</Text>
 
               </TouchableOpacity>
             );

@@ -1,15 +1,13 @@
 /* eslint-disable */
-import React, {useContext,} from "react";
+import React from "react";
 
-import {StyleSheet, Text, View, TouchableOpacity} from "react-native";
+import {Text, View, TouchableOpacity} from "react-native";
 
 
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 
 import {createStackNavigator} from "@react-navigation/stack";
-import {AuthContext} from "../App";
-
-import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+// import {createMaterialTopTabNavigator} from "react-navigation-tabs";
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 import {createDrawerNavigator} from "@react-navigation/drawer";
 import {DrawerContent} from "../pages/InfoMenu";
@@ -29,10 +27,12 @@ import FilmByYear from "../pages/MainPages/Find/FilmByYear";
 import FindActor from "../pages/MainPages/Find/FindActor";
 import FindScreen from "../pages/MainPages/Find/FindScreen";
 import Profile from "../pages/Profile";
-
-
+import Icon from "react-native-vector-icons/FontAwesome"
+import Ionicons from 'react-native-vector-icons/Ionicons'
+import {useTheme} from "../providers/ThemeProvider";
+import HomeSerialsScreen from "../pages/MainPages/HomeSerialsScreen";
 const Tab = createBottomTabNavigator();
-const TopTab = createMaterialTopTabNavigator();
+// const TopTab = createMaterialTopTabNavigator();
 const Stack = createStackNavigator();
 const Draw = createDrawerNavigator();
 
@@ -63,7 +63,7 @@ export const Root=()=> {
         <Stack.Navigator>
 
             <Stack.Screen name="HomeScreen" component={HomeFilmsScreen} options={{headerShown: false}}/>
-            {/*<Stack.Screen name="HomeSerialsScreen" component={HomeSerialsScreen} options={{headerShown: false}}/>*/}
+            <Stack.Screen name="HomeSerialsScreen" component={HomeSerialsScreen} options={{headerShown: false}}/>
             <Stack.Screen name="ListOfFilms" component={ListOfFilms}
                           options={({route}) => ({title: route.params.title})}
             />
@@ -77,8 +77,8 @@ export const Root=()=> {
             {/*              options={({route}) => ({title: route.params.title})}*/}
             {/*/>*/}
 
-            {/*<Stack.Screen name="DetailSerial" component={DetailSerial}*/}
-            {/*              options={({route}) => ({title: route.params.title})}/>*/}
+            <Stack.Screen name="DetailSerial" component={DetailSerial}
+                          options={({route}) => ({title: route.params.title})}/>
             <Stack.Screen name="TopLists" component={TopLists}/>
             <Stack.Screen name="Profile" component={Profile}/>
             <Stack.Screen name="AddList" component={AddList}/>
@@ -91,27 +91,27 @@ export const Root=()=> {
     );
 }
 
-// function SerialRoot() {
-//   return (
-//   <Stack.Navigator>
-//     <Stack.Screen name="HomeSerialsScreen" component={TopTabs} options={{ headerShown: false }} />
-//
-//     <Stack.Screen name="ListOfSerials" component={ListOfSerials} options={({ route }) => ({ title: route.params.title })}
-//     />
-//
-//     <Stack.Screen name="DetailSerial" component={DetailSerial} options={({ route }) => ({ title: route.params.title })} />
-//     <Stack.Screen name="TopLists" component={TopLists} />
-//     <Stack.Screen name="ActorsInfo" component={ActorsInfo} />
-//
-//     <Stack.Screen name="FilmsByFilter" component={FilmsByFilter}
-//                   options={({ route }) => ({ title: route.params.title })} />
-//     {/*<Stack.Screen name="Find"component={FindScreen}/>*/}
-//
-//   </Stack.Navigator>
-//   )    ;
-//
-//
-// }
+function SerialRoot() {
+  return (
+  <Stack.Navigator>
+    <Stack.Screen name="HomeSerialsScreen" component={TopTabs} options={{ headerShown: false }} />
+
+    {/*<Stack.Screen name="ListOfSerials" component={ListOfSerials} options={({ route }) => ({ title: route.params.title })}*/}
+    {/*/>*/}
+
+    <Stack.Screen name="DetailSerial" component={DetailSerial} options={({ route }) => ({ title: route.params.title })} />
+    <Stack.Screen name="TopLists" component={TopLists} />
+    <Stack.Screen name="ActorsInfo" component={ActorsInfo} />
+
+    <Stack.Screen name="FilmsByFilter" component={FilmsByFilter}
+                  options={({ route }) => ({ title: route.params.title })} />
+    {/*<Stack.Screen name="Find"component={FindScreen}/>*/}
+
+  </Stack.Navigator>
+  )    ;
+
+
+}
 
 function Find() {
     return (
@@ -151,19 +151,22 @@ export const Drawer = () => {
 //   return (
 //     <TopTab.Navigator>
 //       <Tab.Screen name="Films" component={HomeFilmsScreen} />
-//       {/*<Tab.Screen name="Serials" component={HomeSerialsScreen} />*/}
+//       <Tab.Screen name="Serials" component={HomeSerialsScreen} />
 //     </TopTab.Navigator>
 //   );
 // }
 
 export const Tabs = () => {
-    const {isDarkTheme} = useContext(AuthContext);
+    const {isDarkTheme} = useTheme();
     return (
 
         <Tab.Navigator tabBarOptions={{
             showLabel: false,
+            style:{
+                elevation:0
+            }
 
-        }}>
+        }}  >
             <Tab.Screen name={"HomeDrawer"} component={Drawer} options={{
                 headerShown: false,
                 tabBarIcon: ({focused}) => (
@@ -180,6 +183,7 @@ export const Tabs = () => {
                             color: !isDarkTheme ? focused ? "#DC143C" : "#748c94" : focused ? "#DAA520" : "#748c94",
                             fontSize: 20,
                         }}/>
+
                         <Text style={{
                             color: !isDarkTheme ? focused ? "#DC143C" : "#748c94" : focused ? "#DAA520" : "#748c94",
                             fontSize: 11,
@@ -209,6 +213,7 @@ export const Tabs = () => {
                             alignItems: "center",
                             justifyContent: "center",
                             top: 0,
+                            width:100
                         }}>
                         <FontAwesome5 name="slideshare" style={{
                             width: 30,
@@ -261,6 +266,7 @@ export const Tabs = () => {
                             alignItems: "center",
                             justifyContent: "center",
                             top: 0,
+                            width:100
 
                         }}>
                         <FontAwesome5 name="comments" style={{
@@ -278,7 +284,7 @@ export const Tabs = () => {
                     </View>
                 ),
             }}/>
-            <Tab.Screen name={"Profile"} component={Root} options={{
+            <Tab.Screen name={"Profile"} component={Profile} options={{
                 // eslint-disable-next-line react/display-name
                 tabBarIcon: ({focused}) => (
                     <View
@@ -286,8 +292,9 @@ export const Tabs = () => {
                             alignItems: "center",
                             justifyContent: "center",
                             top: 0,
+                            width:100
                         }}>
-                        <FontAwesome5 name="bell" style={{
+                        <FontAwesome5 name="user" style={{
                             width: 30,
                             height: 20,
 
@@ -299,7 +306,7 @@ export const Tabs = () => {
                             color: !isDarkTheme ? focused ? "#DC143C" : "#748c94" : focused ? "#DAA520" : "#748c94",
                             fontSize: 11,
                             textAlign: "center",
-                        }}>УВЕДОМЛЕНИЯ</Text>
+                        }}>Профиль</Text>
                     </View>
                 ),
             }}/>

@@ -3,13 +3,14 @@ import {FlatList, Image, ImageBackground, StyleSheet, Text, TouchableOpacity, Vi
 import {ADD_LIST_IMG, DARK_BACKGROUND_IMG, DEFAULT_BACKGROUND_IMG, FAVORITE_LIST_IMG} from "../../Api/apiKey";
 import {DefaultStyles} from "../../styles/defaultstyles";
 import ListPoster from "./ListPoster";
-import {AuthContext} from "../../App";
+
 import {useNavigation} from "@react-navigation/native";
 import {useAuth} from "../../providers/AuthProvider";
 import {getCurrentUserLists} from "../../controllers/UserController";
+import {useTheme} from "../../providers/ThemeProvider";
 
 const MyHomeLists = ({navigation}) => {
-    const { isDarkTheme,screenTheme } = useContext(AuthContext);
+    const { isDarkTheme,screenTheme } = useTheme();
     const {signOut, userData, setUserData,setUserLists,userLists} = useAuth();
 
     useEffect(async () => {
@@ -26,12 +27,12 @@ const MyHomeLists = ({navigation}) => {
 
                     <View style={screenTheme.listTitle}>
                         <View style={{ width: "50%" }}>
-                            <Text style={screenTheme.listTitleText}>My lists</Text>
+                            <Text style={screenTheme.listTitleText}>Мои Списки</Text>
                         </View>
                         <TouchableOpacity style={{ width: "50%", alignItems: "flex-end", justifyContent: "center", right: 15 }}
                                           onPress={()=>
                                               navigation.navigate("MyLists")} >
-                            <Text style={screenTheme.viewAll}>View All</Text></TouchableOpacity>
+                            <Text style={screenTheme.viewAll}>См.Все</Text></TouchableOpacity>
                     </View>
 
                     <View style={{

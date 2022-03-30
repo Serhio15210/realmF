@@ -4,32 +4,34 @@ import {
     View,
     Text,
     TextInput,
-    TouchableWithoutFeedback, Keyboard, TouchableOpacity, Alert
+    TouchableWithoutFeedback, Keyboard, TouchableOpacity, Alert, ActivityIndicator, ScrollView
 } from 'react-native';
-
 
 
 import {basic, colors, form} from "../styles";
 
 import {useAuth} from "../../providers/AuthProvider";
+import {useTheme} from "../../providers/ThemeProvider";
 
 
-const Login = ({ navigation }) => {
+const Login = ({navigation}) => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [message, setMessage] = useState("");
     const [termsCheck, setTermsCheck] = useState(true);
+    const [isLoading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
-    const { user, signIn } = useAuth();
+    const {user, signIn} = useAuth();
+    const {isDarkTheme} = useTheme()
     const validateEmail = email => {
         const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         return re.test(email);
     };
     useEffect(() => {
         // If there is a user logged in, go to the Projects page.
-        if (user !== null) {
+
             navigation.navigate("HomeScreen")
-        }
+
     }, [user]);
     const validatePassword = password => {
         let re = /[0-9]+/;
@@ -37,6 +39,7 @@ const Login = ({ navigation }) => {
     };
 
     const handleSubmit = async () => {
+        setLoading(true)
         if (email === "" || password === "") {
             setMessage("Fill in all fields");
         } else if (!validateEmail(email)) {
@@ -47,7 +50,7 @@ const Login = ({ navigation }) => {
             setMessage("Password should include numbers");
         } else {
             try {
-               await signIn(email, password)
+                await signIn(email, password)
 
 
             } catch (err) {
@@ -55,11 +58,11 @@ const Login = ({ navigation }) => {
             }
 
         }
-
+        setLoading(false)
     };
 
     return (
-        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        <ScrollView onPress={() => Keyboard.dismiss()}>
             <View style={[basic.container]}>
                 <Text style={[form.heading, form.field]}>Log In</Text>
                 <Text style={form.message}>{message}</Text>
@@ -88,11 +91,17 @@ const Login = ({ navigation }) => {
                 </View>
 
 
-
                 <View style={form.field}>
                     {termsCheck && (
                         <TouchableOpacity onPress={handleSubmit} style={form.button}>
-                            <Text style={form.buttonText}>Login</Text>
+                            {isLoading ?
+                                <View style={{
+                                    flex: 1,
+                                    justifyContent: "center",
+                                }}>
+                                    <ActivityIndicator size="large"
+                                                       color={isDarkTheme ? "#DAA520" : "white"}/></View> :
+                                <Text style={form.buttonText}>Login</Text>}
                         </TouchableOpacity>
                     )}
                     {!termsCheck && (
@@ -119,7 +128,7 @@ const Login = ({ navigation }) => {
                 <View style={form.field}>
                     <TouchableOpacity style={[form.button, form.google]}>
 
-                        <Text style={[form.buttonText, { color: colors.alternative }]}>
+                        <Text style={[form.buttonText, {color: colors.alternative}]}>
                             Login with Google
                         </Text>
                     </TouchableOpacity>
@@ -131,7 +140,7 @@ const Login = ({ navigation }) => {
                     </TouchableOpacity>
                 </View>
             </View>
-        </TouchableWithoutFeedback>
+        </ScrollView>
     );
 };
 

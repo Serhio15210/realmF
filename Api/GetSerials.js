@@ -16,7 +16,7 @@ export default class GetFilms {
   static async getPopularSerials(page) {
 
     try {
-      const response =  await fetch(`https://api.themoviedb.org/3/tv/popular?api_key=${API_KEY}&page=${page}`)
+      const response =  await fetch(`https://api.themoviedb.org/3/tv/popular?api_key=${API_KEY}&language=ru&page=${page}`)
       const popularData = await response.json();
 
       return popularData;
@@ -28,7 +28,7 @@ export default class GetFilms {
   static async getDetailSerial(id){
     try {
 
-      const response = await fetch(`https://api.themoviedb.org/3/tv/${id}?api_key=${API_KEY}&append_to_response=credits`)
+      const response = await fetch(`https://api.themoviedb.org/3/tv/${id}?api_key=${API_KEY}&language=ru&append_to_response=credits`)
       const detailData = await response.json();
 
       return detailData;
@@ -40,7 +40,7 @@ export default class GetFilms {
   static async getSimilarSerial(id){
     try {
 
-      const response = await fetch(`https://api.themoviedb.org/3/tv/${id}/similar?api_key=${API_KEY}&sort_by=popularity.desc`)
+      const response = await fetch(`https://api.themoviedb.org/3/tv/${id}/similar?api_key=${API_KEY}&language=ru&sort_by=popularity.desc`)
       const similarSerialData = await response.json();
 
       return similarSerialData;
@@ -52,7 +52,7 @@ export default class GetFilms {
   static async getReviews(id){
     try {
 
-      const response =    await fetch(`https://api.themoviedb.org/3/tv/${id}/reviews?api_key=${API_KEY}`)
+      const response =    await fetch(`https://api.themoviedb.org/3/tv/${id}/reviews?api_key=${API_KEY}&language=ru`)
       const reviewsData = await response.json();
 
       return reviewsData;

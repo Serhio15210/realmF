@@ -1,10 +1,11 @@
 import React, {useContext} from 'react';
-import {AuthContext} from "../../App";
+
 import {Text, TouchableOpacity, View} from "react-native";
 import ListPoster from "./ListPoster";
+import {useTheme} from "../../providers/ThemeProvider";
 
 const MyListItem = ({item,navigation}) => {
-    const {screenTheme}=useContext(AuthContext)
+    const {screenTheme}=useTheme()
     return (
         <TouchableOpacity key={item.listId} onPress={() => navigation.navigate("DetailList", {
             id: item.listId,

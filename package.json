@@ -29,7 +29,8 @@
     "react-native-reanimated": "^1.13.0",
     "react-native-safe-area-context": "^3.1.6",
     "react-native-screens": "^2.10.1",
-    "react-native-vector-icons": "^7.0.0",
+    "react-native-vector-icons": "^9.1.0",
+    "react-navigation-tabs": "^2.11.2",
     "realm": "^10.10.0"
   },
   "devDependencies": {

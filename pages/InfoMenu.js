@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useMemo, useState} from 'react';
+import React, { useEffect, useMemo, useState} from 'react';
 import {
     View,
     StyleSheet,
@@ -21,7 +21,6 @@ import {
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 // eslint-disable-next-line no-unused-vars
 // import TopLists from "./Lists/TopLists";
-import {AuthContext} from "../App";
 import app from "../realmApp";
 import {CommonActions, useNavigation} from "@react-navigation/native";
 import DrawerSection from "react-native-paper/src/components/Drawer/DrawerSection";
@@ -31,9 +30,10 @@ import Realm from "realm";
 import {NONAME_IMG} from "../Api/apiKey";
 import {ObjectId} from "bson";
 import {getCurrentUserData, getCurrentUserLists, UserSchema} from "../controllers/UserController";
+import {useTheme} from "../providers/ThemeProvider";
 
 export  function DrawerContent(props) {
-    const {setIsDarkTheme, isDarkTheme, setIsAuth} = useContext(AuthContext);
+    const {setIsDarkTheme, isDarkTheme, setIsAuth} = useTheme();
     const [openTop, setOpenTop] = useState(false)
     const [openListsTop, setOpenListsTop] = useState(false)
     const heightTop = openTop ? "auto" : 0
@@ -83,12 +83,12 @@ export  function DrawerContent(props) {
                             <View style={styles.section}>
                                 <Paragraph
                                     style={[styles.paragraph, styles.caption, {color: isDarkTheme && "#666"}]}>{subscriptions}</Paragraph>
-                                <Caption style={[styles.caption, {color: isDarkTheme && "#666"}]}>Following</Caption>
+                                <Caption style={[styles.caption, {color: isDarkTheme && "#666"}]}>Подписки</Caption>
                             </View>
                             <View style={styles.section}>
                                 <Paragraph
                                     style={[styles.paragraph, styles.caption, {color: isDarkTheme && "#666"}]}>{subscribers}</Paragraph>
-                                <Caption style={[styles.caption, {color: isDarkTheme && "#666"}]}>Followers</Caption>
+                                <Caption style={[styles.caption, {color: isDarkTheme && "#666"}]}>Подписчики</Caption>
                             </View>
                         </View>
                     </View>
@@ -119,7 +119,7 @@ export  function DrawerContent(props) {
                                     textAlign: 'center',
                                     fontSize: 20,
                                     color: isDarkTheme ? openTop ? "black" : "#DAA520" : openTop ? "white" : "black"
-                                }}>Top Movies</Text>
+                                }}>Топ лучших фильмов</Text>
 
                             </View>
                         </TouchableOpacity>
@@ -133,14 +133,14 @@ export  function DrawerContent(props) {
                                 }))
 
                             }}>
-                                <Text style={{padding: 10, color: isDarkTheme ? "#DAA520" : "black"}}>Top movies </Text>
+                                <Text style={{padding: 10, color: isDarkTheme ? "#DAA520" : "black"}}>Top фильмов TMDB</Text>
                             </TouchableOpacity>
 
 
                         </View>
                     </Drawer.Section>
                     <Drawer.Section style={{marginTop: 15, color: isDarkTheme && "#666"}}
-                                    title={<Text style={{color: isDarkTheme && "#666"}}>My Lists</Text>
+                                    title={<Text style={{color: isDarkTheme && "#666"}}>Списки</Text>
                                     }>
 
                         <TouchableOpacity onPress={() => setOpenListsTop(prev => !prev)}>
@@ -167,7 +167,7 @@ export  function DrawerContent(props) {
                                     textAlign: 'center',
                                     fontSize: 20,
                                     color: isDarkTheme ? openListsTop ? "black" : "#DAA520" : openListsTop ? "white" : "black"
-                                }}>My Lists</Text>
+                                }}>Мои списки фильмов</Text>
 
                             </View>
                         </TouchableOpacity>
@@ -183,7 +183,7 @@ export  function DrawerContent(props) {
                                             index: 1,
                                             routes: [{name: "HomeScreen"}, {name: "DetailList",params: {
                                                     id: item.listId,
-                                                    navigation: navigation,title:item.name
+                                                    navigation: props.navigation,title:item.name
                                                 }}]
                                         }))
 
@@ -202,7 +202,7 @@ export  function DrawerContent(props) {
                                     index: 1,
                                     routes: [{name: "HomeScreen"}, {name: "DetailList",params: {
                                         id: userData.favoriteList.listId,
-                                        navigation: navigation,title:userData.favoriteList.name
+                                        navigation: props.navigation,title:userData.favoriteList.name
                                     }}]
                                 }))
 
@@ -226,7 +226,7 @@ export  function DrawerContent(props) {
                                     size={size}
                                 />
                             )}
-                            label="Home"
+                            label="Главная"
                             onPress={() => {
                                 props.navigation.navigate('Home')
                             }}
@@ -239,7 +239,7 @@ export  function DrawerContent(props) {
                                     size={size}
                                 />
                             )}
-                            label="Profile"
+                            label="Профиль"
                             onPress={() => {
                                 props.navigation.navigate('Profile')
                             }}
@@ -248,10 +248,10 @@ export  function DrawerContent(props) {
 
                     </Drawer.Section>
 
-                    <Drawer.Section title={<Text style={{color: isDarkTheme && "#666"}}>Settings</Text>}>
+                    <Drawer.Section >
                         <DrawerItem
 
-                            label="Settings"
+                            label="Настройки"
                             onPress={() => {
                                 props.navigation.navigate('SettingsScreen')
                             }}
@@ -264,7 +264,7 @@ export  function DrawerContent(props) {
                                     size={size}
                                 />
                             )}
-                            label="Support"
+                            label="Поддержка"
                             onPress={() => {
                                 props.navigation.navigate('SupportScreen')
                             }}
@@ -273,8 +273,8 @@ export  function DrawerContent(props) {
 
                         >
                             <View style={{alignItems: "center", flexDirection: "row"}}>
-                                <Text style={{left: 10, color: isDarkTheme && "#666", paddingRight: 50}}>Dark
-                                    Theme</Text>
+                                <Text style={{left: 10, color: isDarkTheme && "#666", paddingRight: 50}}>Тёмная
+                                    Тема</Text>
 
                                 <Switch value={isDarkTheme} trackColor={{false: "black", true: "#DAA520"}}
                                         onValueChange={() => {
@@ -284,10 +284,10 @@ export  function DrawerContent(props) {
                             </View>
                         </TouchableRipple>
                     </Drawer.Section>
-                    <DrawerSection>
-                        <Button title={"LogOut"} color={isDarkTheme ? "#DAA520" : "#DC143C"} onPress={() => {
+                    <DrawerSection style={{marginBottom:"20%"}}>
+                        <Button title={"Выйти"} color={isDarkTheme ? "#DAA520" : "#DC143C"} onPress={() => {
                             signOut();
-                            navigation.reset({
+                            props.navigation.reset({
                                 index: 0,
                                 routes: [{name: 'Login'}],
                             });

@@ -1,10 +1,11 @@
 import React, { useContext } from "react";
-import { AuthContext } from "../../App";
+
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { IMG_URI } from "../../Api/apiKey";
+import {useTheme} from "../../providers/ThemeProvider";
 
 const SerialItem = ({item,navigation, }) => {
-  const {screenTheme}=useContext(AuthContext)
+  const {screenTheme}=useTheme()
   const theme=screenTheme
   return (
     <TouchableOpacity key={item.id} onPress={() => navigation.navigate("DetailSerial", {

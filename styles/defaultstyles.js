@@ -23,6 +23,7 @@ export const DefaultStyles = StyleSheet.create({
     position: "absolute",
     top: 15,
     right: 15,
+
   },
   carouselContentContainer: {
     flex: 1,

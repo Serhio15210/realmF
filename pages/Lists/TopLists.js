@@ -12,7 +12,8 @@ import {
 import FilmItem from "../../components/Films/FilmItem";
 import {API_KEY} from "../../Api/apiKey";
 import FindButtons from "../MainPages/Find/FindButtoms";
-import { AuthContext } from "../../App";
+
+import {useTheme} from "../../providers/ThemeProvider";
 
 
 const TopLists = ({navigation}) => {
@@ -22,8 +23,8 @@ const TopLists = ({navigation}) => {
         results: [],
         selected: {}
     })
-    const { screenTheme } = useContext(AuthContext);
-    const theme = screenTheme
+    const { screenTheme,isDarkTheme } = useTheme()
+
     useEffect(()=>{
 
         fetch(`https://api.themoviedb.org/3/movie/top_rated?api_key=${API_KEY}&language=ru&page=${page}`).then(data => data.json()).then(data2 => {
@@ -56,10 +57,17 @@ const TopLists = ({navigation}) => {
                 scrollRef = ref;
             }}  renderItem={({ item,index }) => {
                 return (
-                    <FilmItem item={item} key={index} navigation={navigation} />
+                    <View style={{flexDirection:'row',alignItems:'center'}}>
+                        <Text style={{fontSize:20,fontWeight:'bold',color:isDarkTheme?"#DAA520":"#DC143C",marginRight:10}}>{index+1}</Text>
+                        <FilmItem item={item} key={index} navigation={navigation} />
+                    </View>
+
                 )
-            }}/>
-            <FindButtons props={{TopButtonHandler:TopButtonHandler,BackButtonHandler:BackButtonHandler,page:page}}/>
+            }}
+
+            ListFooterComponent={  <FindButtons props={{TopButtonHandler:TopButtonHandler,BackButtonHandler:BackButtonHandler,page:page}}/>}
+            />
+
 
 
 

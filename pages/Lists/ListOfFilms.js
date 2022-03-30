@@ -11,12 +11,13 @@ import {
 } from "react-native";
 import { useScrollToTop } from "@react-navigation/native";
 import FilmItem from "../../components/Films/FilmItem";
-import { AuthContext } from "../../App";
+
+import {useTheme} from "../../providers/ThemeProvider";
 
 const ListOfFilms = ({ route }) => {
     const { data, title, navigation } = route.params;
     const [isScroll, setIsScroll] = useState(false);
-    const {isDarkTheme}=useContext(AuthContext)
+    const {isDarkTheme}=useTheme()
     let listRef;
     const ref = useRef(null);
     const TopButtonHandler = () => {

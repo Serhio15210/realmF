@@ -12,15 +12,15 @@ import {
 } from "react-native";
 import ActorItem from "../../../components/ActorItem";
 import {API_KEY} from "../../../Api/apiKey";
-import {AuthContext} from "../../../App";
 import {DarkThemeStyles} from "../../../styles/darkstyles";
 import {DefaultStyles} from "../../../styles/defaultstyles";
 import FilmItem from "../../../components/Films/FilmItem";
 import FindButtons from "./FindButtoms";
+import {useTheme} from "../../../providers/ThemeProvider";
 
 
 const FindActor = ({navigation}) => {
-    const {isDarkTheme}=useContext(AuthContext)
+    const {isDarkTheme,}=useTheme()
     const theme=isDarkTheme?DarkThemeStyles:DefaultStyles
     const [actors, setActors] = useState([])
     const [page, setPage] = useState(1);
