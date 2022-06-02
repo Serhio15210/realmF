@@ -13,10 +13,11 @@ export const DefaultStyles = StyleSheet.create({
   carouselText: {
     paddingLeft: 14,
     color: "white",
-    position: "absolute",
-    bottom: -35,
-    left: 2,
+    width:200,
+    textAlign:'center',
+
     fontWeight: "bold",
+    alignSelf:'center'
 
   },
   carouselIcon: {
@@ -28,7 +29,7 @@ export const DefaultStyles = StyleSheet.create({
   carouselContentContainer: {
     flex: 1,
     backgroundColor: "#000",
-    height: 500,
+    height: 480,
     paddingHorizontal: 14,
   },
   SearchboxContainer: {
@@ -59,13 +60,15 @@ export const DefaultStyles = StyleSheet.create({
   },
   carouselContainerView: {
     width: "100%",
-    height: 400,
+    height: "100%",
     justifyContent: "center",
     alignItems: "center",
+    paddingTop:20,
+    paddingBottom:30
   },
   carousel: {
     flex: 1,
-    overflow: "visible",
+    overflow: "hidden",
   },
   movieInfoContainer: {
     flexDirection: "row",
@@ -102,7 +105,8 @@ export const DefaultStyles = StyleSheet.create({
   listTitle: {
     backgroundColor: "#DC143C",
     flexDirection: "row",
-
+    justifyContent:'space-between',
+    padding:10
   },
   viewAll: {
     color: "white", fontSize: 14,
@@ -110,6 +114,7 @@ export const DefaultStyles = StyleSheet.create({
   },
   listTitleText: {
     color: "white", fontSize: 24, fontWeight: "bold", marginLeft: 10, marginVertical: 10,
+
   },
 
   filmItemView: {
@@ -117,23 +122,26 @@ export const DefaultStyles = StyleSheet.create({
     marginBottom: 20,
     width: "100%",
     borderWidth: 1,
-    borderColor: "black",
+    borderColor: "#DC143C",
     alignItems: "center",
     flexDirection: "row",
     borderRadius: 10,
+    backgroundColor:"white"
+
   },
   filmItemText: {
     color: "black",
     fontSize: 18,
-    fontWeight: "500",
+    fontWeight: "bold",
     padding: 20,
     textAlign: "center",
+
   },
   filmItemVoteView: {
     backgroundColor:"#DC143C",height:"100%",width:48,borderRadius:7,borderTopLeftRadius:0,borderBottomLeftRadius:0,alignItems:'center',justifyContent:'center'
   },
   filmItemVoteViewText:{
-    color:"white"
+    color:"black"
   },
   findScreenFilter: {
     alignItems: "center",
@@ -201,13 +209,14 @@ export const DefaultStyles = StyleSheet.create({
     width: 100,
   },
   name: {
-    fontSize: 24, fontWeight: "700", marginBottom: 5, color: "white", alignSelf: "center",
+    fontSize: 24, fontWeight: "700", marginBottom: 5, color: "white", alignSelf: "center",textAlign:'center'
   },
   actorsName: {
     fontSize: 24, fontWeight: "700", marginBottom: 5, color: "black", alignSelf: "center",
   },
   text: {
     color: "white",
+
   },
   textReviews: {
     borderWidth: 2,
@@ -224,12 +233,16 @@ export const DefaultStyles = StyleSheet.create({
     color: "#DC143C",
   },
   textActors: {
-    color: "black",
+     color:'white',
+    fontSize: 15,
+  },
+  textInfoActors: {
+    color:'black',
     fontSize: 15,
   },
   titles: {
     marginBottom: 20,
-    color: "#DC143C",
+    color: "white",
     fontSize: 25,
   },
   actorTitles: {
@@ -238,10 +251,10 @@ export const DefaultStyles = StyleSheet.create({
     fontSize: 25,
   },
   similarFilms: {
-    marginRight: 20, width: 223, height: 270, borderWidth: 2, borderRadius: 5, backgroundColor: "#DC143C",
+    marginRight: 20, width: 200
   },
   actorsFilms: {
-    marginRight: 20, width: 223, height: 270, borderWidth: 2, borderRadius: 5, backgroundColor: "#DC143C",
+    marginRight: 20, width: 200
   },
   images: {
     position: "absolute", height: 5, width: 200, backgroundColor: "#DC143C", opacity: 0.8,
@@ -250,10 +263,10 @@ export const DefaultStyles = StyleSheet.create({
     color: "#DC143C",
   },
   mainDetailView: {
-    backgroundColor: "#DC143C",
+
   },
   detailCast: {
-    width: 132, marginRight: 10, borderWidth: 1, borderRadius: 5, borderColor: "#DC143C",
+    width: 132, marginRight: 10,  borderRadius: 5
   },
   detailReviews: {
     borderWidth: 2, backgroundColor: "#DC143C",
@@ -332,7 +345,7 @@ export const DefaultStyles = StyleSheet.create({
     fontSize: 16,
   },
 detailListName:{
-  fontWeight: "700", marginBottom: 5, color: "black", fontSize: 25
+  fontWeight: "700", marginBottom: 5, color: "black", fontSize: 30
 },
   detailListEditButton:{
     alignItems: 'center',
@@ -349,39 +362,46 @@ detailListName:{
   },
   detailListSortButton:{
     padding: 3,
-    borderWidth: 2,
+    borderWidth: 1,
+    elevation:10,
     borderRadius: 10,
+    backgroundColor:'white',
     width: 100,
     alignItems: 'center',
     margin: 10,
+    height:30,
     borderColor: "#DC143C"
   },
   detailListAddButton:{
-    width: 50,
-    marginLeft: "20%",
+     height:35,
+    backgroundColor:'white',
+    elevation:5,
+    justifyContent:'center',
     alignItems: 'center',
-    alignSelf: 'center',
-    borderWidth: 2,
-    borderRadius: 60,
-    borderColor: "#DC143C",
-    right:10
+    borderRadius:10,
+    // borderWidth: 2,
+    // borderRadius: 60,
+
+
   },
   detailListDelButton:{
     borderWidth: 2,
     borderRadius: 10,
-    width: 50,
+    padding:5,
     alignItems: 'center',
     justifyContent: 'center',
-    marginLeft: "20%",
+
+
+
     borderColor: "#DC143C",
-    right:10
+
   },
   detailListAddFilmButton:{
     alignItems: 'center',
     top: -20,
     borderWidth: 2,
     borderColor: '#DC143C',
-    width: 350,
+    width: 200,
     borderRadius: 10,
     height: 50,
     justifyContent: 'center', alignSelf: 'center'
@@ -393,6 +413,6 @@ detailListName:{
     width:250,height:50,padding:5,borderWidth:2, borderColor: "#DC143C",borderBottomLeftRadius:10,borderTopLeftRadius:10,color:'black'
   },
   editProfileContainer:{
-    flex:1,flexDirection:'row',justifyContent:'space-between',backgroundColor:'#DC143C'
+    flex:1,  backgroundColor:'#DC143C'
   }
 });

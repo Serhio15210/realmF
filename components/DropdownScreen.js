@@ -113,11 +113,11 @@ const DropdownScreen = ({navigation, filter, setFilter, setOpenTop,setPage}) => 
 
     return (
 
-        <View style={theme.container}>
+        <View style={{padding: 40}}>
             <View style={{flexDirection: "row", justifyContent: "center"}}>
 
                 <View style={{flexDirection: "row", alignItems: "center"}}>
-                    <Text style={{color: isDarkTheme ? "white" : "black"}}>Фильм</Text>
+                    <Text style={{color: isDarkTheme ? "black" : "black"}}>Фильм</Text>
                     <RadioButton value="name"
                                  status={findCheck === 'name' ? 'checked' : 'unchecked'}
                                  onPress={() => {
@@ -125,7 +125,7 @@ const DropdownScreen = ({navigation, filter, setFilter, setOpenTop,setPage}) => 
                                      setFilter({movieIsOn: true,serialIsOn:false, actorsMovieIsOn: false})
                                      setPage(1)
                                  }} color={isDarkTheme ? "#DAA520" : "#DC143C"}  uncheckedColor={isDarkTheme ? "white" : "black"}/>
-                    <Text style={{color: isDarkTheme ? "white" : "black"}}>Сериал</Text>
+                    <Text style={{color: isDarkTheme ? "black" : "black"}}>Сериал</Text>
                     <RadioButton value="serial"
                                  status={findCheck === 'serial' ? 'checked' : 'unchecked'}
                                  onPress={() => {
@@ -133,7 +133,7 @@ const DropdownScreen = ({navigation, filter, setFilter, setOpenTop,setPage}) => 
                                      setFilter({movieIsOn: false,serialIsOn:true, actorsMovieIsOn: false})
                                      setPage(1)
                                  }} color={isDarkTheme ? "#DAA520" : "#DC143C"}  uncheckedColor={isDarkTheme ? "white" : "black"}/>
-                    <Text style={{color: isDarkTheme ? "white" : "black"}}>Актёр</Text>
+                    <Text style={{color: isDarkTheme ? "black" : "black"}}>Актёр</Text>
                     <RadioButton value="actor"
                                  status={findCheck === 'actor' ? 'checked' : 'unchecked'}
                                  onPress={() => {
@@ -325,17 +325,17 @@ const DarkStyles = StyleSheet.create({
     },
     dropdown: {
         height: 50,
-        backgroundColor: 'white',
         borderRadius: 12,
         padding: 12,
         shadowColor: '#DAA520',
+        backgroundColor:'white',
         shadowOffset: {
             width: 0,
             height: 1,
         },
         shadowOpacity: 1,
         shadowRadius: 2,
-        elevation: 2,
+        elevation: 3,
     },
     placeholderStyle: {
         fontSize: 16,

@@ -1,4 +1,4 @@
-import React, {useContext, useEffect} from 'react';
+import React, {useContext, useEffect, useMemo} from 'react';
 import {FlatList, Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {ADD_LIST_IMG, DARK_BACKGROUND_IMG, DEFAULT_BACKGROUND_IMG, FAVORITE_LIST_IMG} from "../../Api/apiKey";
 import {DefaultStyles} from "../../styles/defaultstyles";
@@ -9,15 +9,11 @@ import {useAuth} from "../../providers/AuthProvider";
 import {getCurrentUserLists} from "../../controllers/UserController";
 import {useTheme} from "../../providers/ThemeProvider";
 
-const MyHomeLists = ({navigation}) => {
+const MyHomeLists = ( ) => {
     const { isDarkTheme,screenTheme } = useTheme();
     const {signOut, userData, setUserData,setUserLists,userLists} = useAuth();
+    const navigation=useNavigation()
 
-    useEffect(async () => {
-
-        setUserLists(await getCurrentUserLists(userData.lists.map(data => data.listId)))
-        // setUserData({...userData,lists:userLists})
-    },[userLists])
     return (
         <View style={{...screenTheme.carouselContentContainer,...{}}}>
 
@@ -38,16 +34,16 @@ const MyHomeLists = ({navigation}) => {
                     <View style={{
                         flex: 1,
                         justifyContent: "center",
-
+                        padding:10
                     }}>
 
 
-                        <FlatList horizontal={true} data={userLists} renderItem={({ item }) => {
+                        <FlatList horizontal={true} data={userLists} keyExtractor={(item, index) => `key-${index}`} renderItem={({ item }) => {
 
                             return (
                                 <TouchableOpacity style={{padding:10}}  onPress={() => navigation.navigate("DetailList", {
                                     id: item.listId,
-                                    navigation: navigation,title:item.name
+                                     title:item.name
                                 })}>
                                     <ListPoster list={item}/>
                                     <Text  style={{padding: 10, color: isDarkTheme ? "#DAA520" : "white", fontWeight: "bold",alignSelf:'center'}}>{item.name}</Text>
@@ -59,7 +55,7 @@ const MyHomeLists = ({navigation}) => {
                                       <TouchableOpacity onPress={()=>{
                                           navigation.navigate("AddList")
                                       }}>
-                                          <Image source={ ADD_LIST_IMG} style={{height: 150, width: 150}}  />
+                                          <Image source={ ADD_LIST_IMG} style={{height: 150, width: 150 }}  />
                                           <Text  style={{padding: 10, color: isDarkTheme ? "#DAA520" : "white", fontWeight: "bold",alignSelf:'center'}}>ADD</Text>
                                       </TouchableOpacity>
                                   </View>}
@@ -67,7 +63,7 @@ const MyHomeLists = ({navigation}) => {
                                       id:userData.favoriteList.listId,
                                       navigation: navigation,title:userData.favoriteList.name
                                   })}>
-                                      <Image source={{uri:FAVORITE_LIST_IMG}} style={{height: 200, width: 200}} />
+                                      <Image source={{uri:FAVORITE_LIST_IMG}} style={{height: 200, width: 200,borderRadius:5}} />
                                       <Text  style={{padding: 10, color: isDarkTheme ? "#DAA520" : "white", fontWeight: "bold",alignSelf:'center'}}>{userData.favoriteList.name}</Text>
                                   </TouchableOpacity>}/>
 

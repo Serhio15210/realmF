@@ -1,23 +1,11 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
-import {
-    Button, FlatList,
-    Image, ImageBackground,
-    InteractionManager,
-    SafeAreaView,
-    ScrollView, StyleSheet,
-    Text,
-    TouchableHighlight, TouchableOpacity,
-    View,
-} from "react-native";
-import {useNavigation, useScrollToTop} from "@react-navigation/native";
+import React, {useRef, useState} from 'react';
+import {Button, FlatList, SafeAreaView, Text, TouchableOpacity} from "react-native";
 import FilmItem from "../../components/Films/FilmItem";
-
 import {useTheme} from "../../providers/ThemeProvider";
 import AntDesign from "react-native-vector-icons/AntDesign";
-import {DARK_BACKGROUND_IMG, DEFAULT_BACKGROUND_IMG} from "../../Api/apiKey";
-import {DefaultStyles} from "../../styles/defaultstyles";
+import {useNavigation} from "@react-navigation/native";
 
-const ListOfFilms = ({ route }) => {
+const ListOfSerials = ({route}) => {
     const { data, title } = route.params;
     const navigation=useNavigation()
     const [isScroll, setIsScroll] = useState(false);
@@ -27,23 +15,24 @@ const ListOfFilms = ({ route }) => {
     const TopButtonHandler = () => {
         listRef.scrollToOffset({ offset: 0, animated: true });
     };
-
     return (
+        <SafeAreaView style={{
+            flex: 1,
 
-            <ImageBackground source={{ uri: !isDarkTheme ? DARK_BACKGROUND_IMG : DEFAULT_BACKGROUND_IMG,flex:1,padding:10  }}
-                             style={DefaultStyles.ImageBg} blurRadius={10}>
+        }}>
             {isScroll && <TouchableOpacity   onPress={TopButtonHandler} style={{backgroundColor:isDarkTheme?"#DAA520":"#DC143C",position:'absolute',zIndex:3,right:15,borderRadius:50,display:'flex',alignItems:'center',padding:10}}><AntDesign name="arrowup" color="white" size={20}/></TouchableOpacity>}
 
             <FlatList data={data} renderItem={({ item, index }) => {
-                return (<FilmItem item={item} navigation={navigation} />);
+                return (<FilmItem item={item} navigation={navigation} isSerial={true} />);
+
             }
             } ref={(ref) => {
                 listRef = ref;
-            }} onScroll={() =>   setIsScroll(true)} initialNumToRender={10}  />
+            }} onScroll={() =>   setIsScroll(true)} initialNumToRender={10} />
 
-            </ImageBackground>
 
+        </SafeAreaView>
     );
 };
 
-export default ListOfFilms;
+export default ListOfSerials;

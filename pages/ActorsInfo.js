@@ -57,14 +57,14 @@ const ActorsInfo = ({ route }) => {
         </Text>
         <Text style={{ ...details.actorsName, ...{ alignSelf: "flex-start" } }}>Personal information</Text>
         <Text style={details.actorTitles}>Profession{"\n"}<Text
-          style={details.textActors}>{actorInfo.known_for_department}</Text></Text>
+          style={details.textInfoActors}>{actorInfo.known_for_department}</Text></Text>
         <Text style={details.actorTitles}>Birthday{"\n"}<Text
-          style={details.textActors}>{actorInfo.birthday}</Text></Text>
+          style={details.textInfoActors}>{actorInfo.birthday}</Text></Text>
 
         <Text style={details.actorTitles}>Place of birth{"\n"}<Text
-          style={details.textActors}>{actorInfo.place_of_birth}</Text></Text>
+          style={details.textInfoActors}>{actorInfo.place_of_birth}</Text></Text>
         <Text style={{ ...details.actorsName, ...{ alignSelf: "flex-start", paddingTop: 20 } }}>Biography {"\n"} </Text>
-        <Text style={details.textActors}>{actorInfo.biography}</Text>
+        <Text style={details.textInfoActors}>{actorInfo.biography}</Text>
 
         <Text style={{ ...details.actorsName, ...{ alignSelf: "flex-start", paddingTop: 20 } }}>Films:</Text>
         <FlatList
@@ -79,17 +79,16 @@ const ActorsInfo = ({ route }) => {
               })}>
                 <ImageBackground source={{ uri: IMG_URI + item.poster_path }}
                                  style={{
-                                   width: 220,
-                                   height: 220,
-                                   borderTopRightRadius: 5,
-                                   borderTopLeftRadius: 5,
-                                   backgroundSize: "cover",
-                                   backgroundPositionX: "50%",
-                                   backgroundPositionY: "50%",
+                                     height: 320,
+                                     width:200,
+                                     borderRadius:20,
+                                     backgroundSize: "cover",
+                                     backgroundPositionX: "50%",
+                                     backgroundPositionY: "50%",
                                  }} />
 
 
-                <Text style={details.text}>{item.title}</Text>
+                <Text style={{...details.text,color:isDarkTheme?'white':'black',textAlign:'center'}}>{item.title}</Text>
 
               </TouchableOpacity>
             );

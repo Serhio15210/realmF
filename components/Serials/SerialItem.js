@@ -3,32 +3,23 @@ import React, { useContext } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { IMG_URI } from "../../Api/apiKey";
 import {useTheme} from "../../providers/ThemeProvider";
+import {useNavigation} from "@react-navigation/native";
 
-const SerialItem = ({item,navigation, }) => {
+const SerialItem = ({item,isSerial }) => {
   const {screenTheme}=useTheme()
   const theme=screenTheme
+    const navigation=useNavigation()
   return (
+
     <TouchableOpacity key={item.id} onPress={() => navigation.navigate("DetailSerial", {
-      id: item.id,
-      navigation: navigation,title:item.original_title
-    })}  style={{width:350,justifyContent:'center',alignSelf:'center', }}>
-      <View key={item.imdbID} style={theme.filmItemView}>
+        id: item.id,
+        title:item.name
 
-        <Image source={{uri: IMG_URI + item.poster_path}}
-               style={{
-                 width: 80,
-                 height: 120,
-                 alignSelf:"flex-start",borderRadius:8,borderBottomRightRadius:0,borderTopRightRadius:0
-               }} resizeMode="cover"/>
+    })}  style={{alignSelf:'center',marginBottom:20}}>
+        <Image source={{ uri: IMG_URI + item.poster_path }} style={screenTheme.carouselImage} />
 
-        <View style={{width:220,height:120,alignItems:"center",justifyContent:"center"}}>
-          <Text style={theme.filmItemText}>{item.name}</Text>
-        </View>
-        <View style={theme.filmItemVoteView}>
-          <Text style={theme.filmItemVoteViewText}>{item.vote_average===0?"None":item.vote_average}</Text>
-        </View>
+        <Text style={screenTheme.carouselText}>{item.name}</Text>
 
-      </View>
     </TouchableOpacity>
   );
 };

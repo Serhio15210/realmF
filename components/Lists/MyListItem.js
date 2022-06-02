@@ -9,9 +9,9 @@ const MyListItem = ({item,navigation}) => {
     return (
         <TouchableOpacity key={item.listId} onPress={() => navigation.navigate("DetailList", {
             id: item.listId,
-            navigation: navigation,title:item.name
+            title:item.name
         })}  style={{width:350,alignSelf:'center' }}>
-            <View  style={{...screenTheme.filmItemView,...{flexDirection:'row',justifyContent:'space-between'}}}>
+            <View  style={{...screenTheme.filmItemView,}}>
 
                 <ListPoster list={item}/>
 

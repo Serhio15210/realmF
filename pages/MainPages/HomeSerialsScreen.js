@@ -16,6 +16,7 @@ import {
 import GetSerials from "../../Api/GetSerials";
 import HomeSerialsList from "../../components/Serials/HomeSerialsList";
 import HomeFilmsList from "../../components/Films/HomeFilmsList";
+import MyHomeLists from "../../components/Lists/MyHomeLists";
 
 
 const HomeSerialsScreen = ({ navigation }) => {
@@ -63,20 +64,9 @@ const HomeSerialsScreen = ({ navigation }) => {
 
             <HomeSerialsList data={topData} name={"topData"} navigation={navigation} isLoading={isLoading} />
             <HomeSerialsList data={popularData} name={"popularData"} navigation={navigation} isLoading={isLoading} />
+            <MyHomeLists navigation={navigation}/>
 
 
-            <View style={{ marginHorizontal: 14 }}>
-                <View style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    marginBottom: 24,
-                    marginTop: 36,
-                }}>
-                    <Text style={{ color: "white", fontSize: 24, fontWeight: "bold" }}>My List</Text>
-                    <Text style={{ color: "#02ad94", fontSize: 14, fontWeight: "normal" }}>View All</Text>
-                </View>
-            </View>
         </ScrollView>
     );
 };

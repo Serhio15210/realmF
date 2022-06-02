@@ -34,14 +34,18 @@ const AddList = () => {
     const [isAddFilm, setIsAddFilm] = useState(false)
     const [isEdit, setIsEdit] = useState(false)
     const [isListFilms, setIsListFilms] = useState(false)
-    const {userData}=useAuth()
+    const {userData,setUserData}=useAuth()
     const [isLoading, setIsLoading] = useState(false)
     const [isLoadingSave, setIsLoadingSave] = useState(false)
     const [isListChanged, setIsListChanged] = useState(false);
     const [nameQuery, setNameQuery] = useState('')
     const [movieQuery, setMovieQuery] = useState('')
     const navigation = useNavigation();
-    const [listData, setListData] = useState([])
+    const [listData, setListData] = useState({
+        listId: '',
+        name: '',
+        films: []
+    })
 
     useEffect(() => {
         return () => {
@@ -56,35 +60,34 @@ const AddList = () => {
             <AddFilmToList setIsAddFilm={setIsAddFilm} isAddFilm={isAddFilm} listData={listData} userData={userData} setIsListChanged={setIsListChanged} title={nameQuery} setListData={setListData} isList={false} />
 
             <View style={{
-                flexDirection: 'row',
-                alignContent: 'space-between',
+
                 alignItems: 'center',
                 alignSelf: 'center'
             }}>
-                <TextInput style={{...screenTheme.findScreenInput, ...{backgroundColor:isDarkTheme?"#333333":"white",color:isDarkTheme?"white":"black"}}} placeholder={`Enter a list name...`}
+                <TextInput style={{...screenTheme.findScreenInput, ...{backgroundColor:isDarkTheme?"#333333":"white",color:isDarkTheme?"white":"black",borderRadius:15,borderWidth:1}}} placeholder={`Enter a list name...`}
                            placeholderTextColor={isDarkTheme?"white":"black"}
                            value={nameQuery}
-                           onChangeText={text => setNameQuery(text)} editable={editName}>
+                           onChangeText={text => setNameQuery(text)} editable={editName}/>
 
-                </TextInput>
-                <TouchableOpacity onPress={() => setEditName(true)} style={{marginRight:10,marginLeft:10,alignSelf:'center'}}>
-                    <Icon name="edit" size={40} color="#DC143C"/>
 
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => {
-                    if (nameQuery){
-                        setEditName(false)
-                    }else{
-                        setEditName(true)
+                {/*<TouchableOpacity onPress={() => setEditName(true)} style={{marginRight:10,marginLeft:10,alignSelf:'center'}}>*/}
+                {/*    <Icon name="edit" size={40} color="#DC143C"/>*/}
 
-                    }
+                {/*</TouchableOpacity>*/}
+                {/*<TouchableOpacity onPress={() => {*/}
+                {/*    if (nameQuery){*/}
+                {/*        setEditName(false)*/}
+                {/*    }else{*/}
+                {/*        setEditName(true)*/}
 
-                }}>
-                    <Icon name="save" size={40} color="#DC143C"/>
-                </TouchableOpacity>
+                {/*    }*/}
+
+                {/*}}>*/}
+                {/*    <Icon name="save" size={40} color="#DC143C"/>*/}
+                {/*</TouchableOpacity>*/}
 
             </View>
-            <View style={{flexDirection:'row',width:"100%"}}>
+            <View style={{flexDirection:'row',width:"100%",justifyContent:'center'}}>
 
                 <TouchableOpacity style={{alignItems: 'center',borderWidth:2,padding:10,borderColor:isDarkTheme?"#DAA520":"#DC143C",borderRadius:10,margin:10}}
                                   onPress={() => {
@@ -95,9 +98,9 @@ const AddList = () => {
                 </TouchableOpacity>
                 <TouchableOpacity style={{alignItems: 'center', alignSelf: "flex-end",borderWidth:2,padding:10,borderColor:isDarkTheme?"#DAA520":"#DC143C",borderRadius:10,margin:10}}
                                   onPress={ () => {
-                                       setIsEdit(true)
+                                       setIsEdit(!isEdit)
                                   }}>
-                    <AntDesign name="edit" size={20}/>
+                    <AntDesign name="edit" size={20} color={isDarkTheme?'white':'black'}/>
                 </TouchableOpacity>
             {
                 isLoadingSave ?
@@ -108,10 +111,13 @@ const AddList = () => {
                         <ActivityIndicator size="large" color={isDarkTheme?"#DAA520":"#DC143C"} /></View> :
 
                     <TouchableOpacity style={{alignItems: 'center', alignSelf: "flex-end",borderWidth:2,padding:10,borderColor:isDarkTheme?"#DAA520":"#DC143C",borderRadius:10,margin:10}}
-                                      onPress={async () => {
+                                      onPress={ () => {
                                           if (nameQuery){
                                               setIsLoading(true)
-                                              await createListForUser(nameQuery, listData)
+                                               createListForUser(nameQuery, listData.films).then(id=>
+                                                   setUserData({...userData,lists:userData.lists.concat([{'listId':id}])})
+                                               )
+
                                               setListData([])
                                               setMovieQuery('')
                                               setNameQuery('')
@@ -123,13 +129,13 @@ const AddList = () => {
                                           }
 
                                       }}>
-                        <MaterialIcons size={20} name="save-alt"/>
+                        <MaterialIcons size={20} name="save-alt" color={isDarkTheme?'white':'black'}/>
                     </TouchableOpacity>
 
             }
 
         </View>
-            <ListFilms filteredFilms={listData} listData={listData} setListData={setListData}/>
+            <ListFilms filteredFilms={listData.films} listData={listData} setListData={setListData} isList={false} isEdit={isEdit} />
         </View>
     );
 };

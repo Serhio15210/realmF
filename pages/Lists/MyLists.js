@@ -1,11 +1,12 @@
 import React, {useContext, useRef, useState} from 'react';
-import {Button, FlatList, SafeAreaView, Text, TouchableOpacity, View} from "react-native";
+import {Button, FlatList, Image, SafeAreaView, Text, TouchableOpacity, View} from "react-native";
 
 import {useNavigation} from "@react-navigation/native";
 import {useAuth} from "../../providers/AuthProvider";
 import MyListItem from "../../components/Lists/MyListItem";
 import ListPoster from "../../components/Lists/ListPoster";
 import {useTheme} from "../../providers/ThemeProvider";
+import {FAVORITE_LIST_IMG} from "../../Api/apiKey";
 
 const MyLists = () => {
     const [isScroll, setIsScroll] = useState(false);
@@ -25,8 +26,8 @@ const MyLists = () => {
         }}>
             {/*{isScroll && <Button title="up" onPress={TopButtonHandler} color={isDarkTheme?"#DAA520":"#DC143C"} />}*/}
 
-            <FlatList data={userLists} renderItem={({ item, index }) => {
-                return (<MyListItem item={item} key={index} navigation={navigation} />);
+            <FlatList data={userLists}   keyExtractor={(item, index) => `key-${index}`} renderItem={({ item, index }) => {
+                return (<MyListItem  item={item} key={index} navigation={navigation} />);
 
             }
             } ref={(ref) => {
@@ -34,11 +35,11 @@ const MyLists = () => {
             }} onScroll={() => setIsScroll(true)}
             ListHeaderComponent={ <TouchableOpacity  onPress={() => navigation.navigate("DetailList", {
                 id: userData.favoriteList.listId,
-                navigation: navigation,title:userData.favoriteList.name
+                title:userData.favoriteList.name
             })}  style={{width:350,alignSelf:'center' }}>
-                <View  style={{...screenTheme.filmItemView,...{flexDirection:'row',justifyContent:'space-between'}}}>
+                <View  style={{...screenTheme.filmItemView}}>
 
-                    <ListPoster list={userData.favoriteList}/>
+                    <Image source={{uri:FAVORITE_LIST_IMG}} style={{height: 200, width: 200,borderRadius:5}} />
 
                     <View style={{alignSelf:'center'}}>
                         <Text style={screenTheme.filmItemText}>{userData.favoriteList.name}</Text>

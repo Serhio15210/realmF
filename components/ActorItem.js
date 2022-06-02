@@ -20,7 +20,7 @@ const ActorItem = ({item,navigation,actorFilms}) => {
                            alignSelf:"flex-start",borderRadius:8,borderBottomRightRadius:0,borderTopRightRadius:0
                        }} resizeMode="cover"/>
 
-                <View style={{width:220}}>
+                <View style={{ alignSelf:'center'}}>
                     <Text style={theme.filmItemText}>{item.name}</Text>
                 </View>
 

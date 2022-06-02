@@ -23,7 +23,7 @@ export const createListForUser = async (name, filmsData) => {
             listId: listId,
             userID: app.currentUser.id,
             name: name,
-            subscribers:0,
+            subscribers:[],
             films: filmsData
         })
         await addListToUser(listId)
@@ -31,6 +31,7 @@ export const createListForUser = async (name, filmsData) => {
     } catch (e) {
         Alert.alert(`Error creating:${e.message}`);
     }
+    return listId
 
 }
 export const getUserListById = async (id) => {
@@ -41,6 +42,19 @@ export const getUserListById = async (id) => {
         const lists = await collectionLists.find({"listId": {"$eq": id}})
 
         return lists
+    } catch (error) {
+        console.error(error);
+    }
+
+}
+export const getUserLists = async (id) => {
+
+    try {
+        const mongodb = app.currentUser.mongoClient("mongodb-atlas")
+        const collectionLists = mongodb.db("Auth").collection("Lists")
+        return await collectionLists.find({"userID": {"$eq": id}})
+
+
     } catch (error) {
         console.error(error);
     }
@@ -82,15 +96,45 @@ export const addFilmToList = async (listId, film) => {
     await collectionLists.updateOne({"listId": {"$eq": listId}}, updateLists)
 
 }
+export const deleteFilmFromList = async (list, film) => {
+    const updateLists = {
+        "$set": {
+            "films": list.films.filter(item=>item.filmId!==film.filmId)
+
+        }
+    };
+
+    const mongodb = app.currentUser.mongoClient("mongodb-atlas")
+    const collectionLists = mongodb.db("Auth").collection("Lists")
+
+    await collectionLists.updateOne({"listId": {"$eq": list.listId}}, updateLists)
+
+}
 export const addFilmToFavoriteList = async (list, film) => {
+    // console.log(film)
     const updateFavoriteList = {
         "$set": {
                 "favoriteList":{
                     ...list,
-                    "films": [...list.films,film]
+                    "films": list.films.concat([film])
                 }
+        }
+    };
+
+    const mongodb = app.currentUser.mongoClient("mongodb-atlas")
+    const collectionUsers = mongodb.db("Auth").collection("Users")
 
 
+    await collectionUsers.updateOne({"userID": {"$eq": app.currentUser.id}}, updateFavoriteList)
+}
+export const addFilmArrayToFavoriteList = async (list, film) => {
+    // console.log(film)
+    const updateFavoriteList = {
+        "$set": {
+            "favoriteList":{
+                ...list,
+                "films": [...list.films,...film]
+            }
         }
     };
 
@@ -134,13 +178,58 @@ export const deleteList = async (listId) => {
     const mongodb = app.currentUser.mongoClient("mongodb-atlas")
     const collectionUsers = mongodb.db("Auth").collection("Users")
 
-    await collectionUsers.updateOne({
-            "lists":
-                {"listId": listId}
-        }
+    await collectionUsers.updateOne({"userID": {"$eq": app.currentUser.id}}
         , updateLists)
 
     const collectionLists = mongodb.db("Auth").collection("Lists")
     await collectionLists.deleteOne(deleteList)
 
+}
+export const subscribeUserToList = async (id,username) => {
+
+    const update = {
+        "$push": {
+            "subscribers": {userID:app.currentUser.id,username:username}
+
+        }
+
+    };
+    const mongodb = app.currentUser.mongoClient("mongodb-atlas")
+    const collectionUser = mongodb.db("Auth").collection("Lists")
+
+    await collectionUser.updateOne(
+        {"userID": {"$eq": id}}, update)
+
+}
+export const unSubscribeUserFromList = async (id) => {
+
+    const update = {
+        $pull: { subscribers: {userID:app.currentUser.id}}
+
+    };
+    const mongodb = app.currentUser.mongoClient("mongodb-atlas")
+    const collectionUser = mongodb.db("Auth").collection("Lists")
+
+    await collectionUser.updateOne(
+        {"userID": {"$eq": id}}, update)
+
+}
+
+export const rateFilm=async (id, rate, filmId,films) => {
+
+    const index = films.findIndex(object => {
+        return object.filmId === filmId;
+    });
+    const selectFilm=films.filter(film=>film.filmId===filmId)[0]
+    films[index]={...selectFilm,'rate':rate}
+    const mongodb = app.currentUser.mongoClient("mongodb-atlas")
+    const collectionUser = mongodb.db("Auth").collection("Lists")
+
+    await collectionUser.updateOne({"listId": {"$eq": id}},{
+        "$set": {
+            "films": films
+
+        }
+    } )
+    return films
 }

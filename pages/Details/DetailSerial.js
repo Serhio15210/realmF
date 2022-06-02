@@ -17,7 +17,7 @@ import { API_KEY, IMG_URI, NONAME_IMG } from "../../Api/apiKey";
 import GetSerials from "../../Api/GetSerials";
 import { useNavigationState } from "@react-navigation/native";
 import {useTheme} from "../../providers/ThemeProvider";
-import {FilmPeople, SimilarFilms} from "./DetailFilm";
+import {FilmPeople, RenderCastItem, SimilarFilms} from "./DetailFilm";
 
 const DetailSerial = ({ route }) => {
   const [isLoading, setLoading] = useState(true);
@@ -45,9 +45,9 @@ const DetailSerial = ({ route }) => {
 
   const { id, navigation, title } = route.params;
   const routesLength = useNavigationState(state => state.routes);
-  useEffect(async () => {
-
-    await GetSerials.getDetailSerial(id).then((data2) => {
+  useEffect(  () => {
+      console.log(id)
+      GetSerials.getDetailSerial(id).then((data2) => {
 
       setState({
         ...state,
@@ -61,13 +61,14 @@ const DetailSerial = ({ route }) => {
       setCast(data2.credits.cast);
       setCrew(data2.credits.crew);
 
+
     });
 
-    await GetSerials.getSimilarSerial(id).then((data2) => {
+      GetSerials.getSimilarSerial(id).then((data2) => {
 
       setSimilarSerials(data2.results);
     });
-    await GetSerials.getReviews(id).then(data2 => {
+      GetSerials.getReviews(id).then(data2 => {
 
       setReviews(data2.results);
 
@@ -97,28 +98,30 @@ const DetailSerial = ({ route }) => {
   return (
     <ScrollView>
 
-      <View>
         <ImageBackground
-          source={{ uri: IMG_URI + state.selected.backdrop_path }}
-          resizeMode="cover" style={{
-          flex: 1, height: 200,
-          justifyContent: "center",
-        }}>
+            source={{uri: IMG_URI + state.selected.backdrop_path}}
+            resizeMode="cover" style={{
+            shadowOffset: {width: 10, height: 10},
+            flex: 1,
+            justifyContent: "center",
+
+        }} blurRadius={3}>
+            <View style={{ backgroundColor: 'rgba(0,0,0,0.5)'}}>
 
 
-          <Image source={{ uri: IMG_URI + state.selected.poster_path }} style={{
-            width: 100,
-            height: 150, left: 20,
-            shadowOffset: { width: 10, height: 10 },
-            shadowColor: "white",
-            shadowOpacity: 1.0,
-            borderColor: "black", borderWidth: 2, borderRadius: 10,
-          }} resizeMode="cover" />
+            <Image source={{uri: IMG_URI + state.selected.poster_path}} style={{
+                width: 270,
+                height: 400,
+                alignSelf:'center',
+                marginTop:50,
+                shadowOffset: {width: 10, height: 10},
+                shadowColor: "white",
+                shadowOpacity: 1.0,
+                borderRadius: 10,
+            }} resizeMode="contain"/>
 
-        </ImageBackground>
 
 
-      </View>
       <View style={details.mainDetailView}>
           <View style={{flexDirection: 'row', justifyContent: 'space-around' }}>
               <View style={{flexDirection: 'column', justifyContent: 'space-around',alignItems:'center'}}>
@@ -141,10 +144,13 @@ const DetailSerial = ({ route }) => {
             justifyContent: "center",
           }}>
             <Text style={{ ...details.text, ...{ fontSize: 20 } }}>Рейтинг:{"\n"}</Text>
-            {isLoading?
+              {
+            isLoading?
               <View style={{flex: 1,
                 justifyContent: "center"}}>
                 <ActivityIndicator size="large" color="white"/></View>:
+                ratings.selected === undefined || ratings.selected.length === 0 ?
+                    <Text style={{...details.text, ...{bottom: 10}}}>Not found(</Text> :
             <Text
               style={details.text}>{ratings.selected.map(rat => (<>
               <Text>  {rat.Source}: </Text>
@@ -179,12 +185,14 @@ const DetailSerial = ({ route }) => {
             style={details.text}>{state.selected.number_of_seasons }</Text></Text>
           <Text style={{ ...details.text, ...{ alignSelf: "center",top:30,marginBottom:20 } }}>К-ство эпизодов: <Text
             style={details.text}>{state.selected.number_of_episodes }</Text></Text>
-
-          <View style={{ padding: 20 }}>
-            <Text style={details.text}>{state.selected.tagline}{"\n\n"}</Text>
-            <Text><Text style={{ ...details.text, ...{ fontSize: 20 } }}>О сериале:{"\n\n"}</Text><Text
-              style={details.text}>{state.selected.overview}</Text></Text>
-          </View>
+            {  state.selected.overview ?
+                <View style={{ padding: 20 }}>
+                    <Text style={details.text}>{state.selected.tagline}{"\n\n"}</Text>
+                    <Text><Text style={{ ...details.text, ...{ fontSize: 20 } }}>О сериале:{"\n\n"}</Text><Text
+                        style={details.text}>{state.selected.overview}</Text></Text>
+                </View>:
+                <Text ></Text>
+           }
 
           <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
             <Text style={details.text}>Страны:{"\n"}<Text
@@ -198,7 +206,27 @@ const DetailSerial = ({ route }) => {
         </View>
 
       </View>
-        <FilmPeople cast={cast} crew={crew} navigation={navigation}/>
+        <View style={{padding:10}}>
+            <Text style={details.titles}>Сезоны:</Text>
+      <FlatList
+
+          horizontal={true}
+          keyExtractor={(item, index) => 'key'+index}
+          data={state.selected?.seasons}
+          renderItem={({item, index}) =>
+              <View style={{margin:10}}>
+                  <Image source={item.poster_path ? {uri: IMG_URI + item.poster_path} : {uri: NONAME_IMG}}
+                         style={{
+                             height: 170,
+                             width: 130,
+                             borderRadius: 10,
+                         }}/>
+                <Text style={{textAlign:'center',marginTop:10,color:'white'}}>{item.name}</Text>
+              </View>
+          }
+          initialNumToRender={10}
+      /></View>
+        <FilmPeople cast={cast} crew={[]} navigation={navigation}/>
       {reviews.length!==0&&
           <View style={details.detailReviews}>
             <View style={{padding: 10}}>
@@ -224,6 +252,8 @@ const DetailSerial = ({ route }) => {
             </View>
           </View>}
       <SimilarFilms similarFilms={similarSerials} navigation={navigation} isSerial={true}/>
+            </View>
+        </ImageBackground>
     </ScrollView>
 
   )

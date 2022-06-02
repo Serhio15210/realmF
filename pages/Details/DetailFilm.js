@@ -1,6 +1,6 @@
-import React, {useContext, useEffect, useMemo, useState} from "react";
+import React, {useCallback, useContext, useEffect, useMemo, useState} from "react";
 import {
-    ActivityIndicator,
+    ActivityIndicator, Alert,
     FlatList,
     Image,
     ImageBackground,
@@ -15,10 +15,14 @@ import GetFilms from "../../Api/GetFilms";
 import {IMG_URI, NONAME_IMG} from "../../Api/apiKey";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import AntDesign from "react-native-vector-icons/AntDesign";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
 import {addFilmToFavoriteList, deleteFilmFromFavoriteList} from "../../controllers/ListController";
 import {useAuth} from "../../providers/AuthProvider";
 import AddFilmToListModal from "../../components/Films/AddFilmToListModal";
 import {useTheme} from "../../providers/ThemeProvider";
+import {useNavigation} from "@react-navigation/native";
+import YoutubePlayer from "react-native-youtube-iframe";
+import TrailersModal from "../../components/TrailersModal";
 
 const DetailFilm = ({route}) => {
     const [isLoading, setLoading] = useState(false);
@@ -38,6 +42,7 @@ const DetailFilm = ({route}) => {
     const [cast, setCast] = useState([]);
     const [crew, setCrew] = useState([]);
     const [reviews, setReviews] = useState([]);
+    const [trailer, setTrailer] = useState([]);
 
     const [chosenFilm, setChosenFilm] = useState({
         title: '',
@@ -47,9 +52,11 @@ const DetailFilm = ({route}) => {
     const {screenTheme, isDarkTheme} = useTheme();
     const details = screenTheme;
     const [refreshing, setRefreshing] = React.useState(false);
-    const {id, navigation, title} = route.params;
-    const {userData} = useAuth()
+    const {id, title,navigation} = route.params;
+    // const navigation=useNavigation()
+    const {userData,setUserData} = useAuth()
     const [isAddList, setIsAddList] = useState(false)
+    const [isTrailersOpen, setIsTrailersOpen] = useState(false)
     const wait = (timeout) => {
         return new Promise(resolve => setTimeout(resolve, timeout));
     };
@@ -58,9 +65,9 @@ const DetailFilm = ({route}) => {
         wait(1000).then(() => setRefreshing(false));
     }, []);
 
-    useEffect(async () => {
+    useEffect(() => {
         setLoading(true)
-        await GetFilms.getDetailFilm(id).then((data2) => {
+        GetFilms.getDetailFilm(id).then((data2) => {
 
             setState({
                 ...state,
@@ -79,22 +86,25 @@ const DetailFilm = ({route}) => {
                 filmId: data2.id
             })
         });
-        await GetFilms.getSimilarFilm(id).then((response) => {
+        GetFilms.getSimilarFilm(id).then((response) => {
             setSimilarFilms(response.results);
 
         });
 
-        await GetFilms.getReviews(id).then((response) => {
+         GetFilms.getReviews(id).then((response) => {
             setReviews(response.results);
 
         });
-
+        GetFilms.getTrailer(id).then(data=>{
+            console.log(data)
+            setTrailer(data)
+        })
 
     }, []);
 
-    useMemo(async () => {
+    useMemo( () => {
         try {
-            await GetFilms.getRatings(state.selected.imdb_id).then((response) => {
+             GetFilms.getRatings(state.selected.imdb_id).then((response) => {
                 setRatings({...state, selected: response});
             })
 
@@ -105,10 +115,16 @@ const DetailFilm = ({route}) => {
         }
 
     }, [state.selected]);
+    const [playing, setPlaying] = useState(false);
 
-    const isFilmAddedToFavoriteList = (filmId) => {
-        return userData.favoriteList.films.filter(film => film.filmId === filmId).length !== 0
-    }
+    const onStateChange = useCallback((state) => {
+        if (state === "ended") {
+            setPlaying(false);
+            // Alert.alert("video has finished playing!");
+        }
+    }, []);
+
+
     return (
         isLoading ?
                 <View style={{
@@ -116,74 +132,81 @@ const DetailFilm = ({route}) => {
                     justifyContent: "center",
                 }}>
                     <ActivityIndicator size="large" color="red"/></View>:
-        <ScrollView refreshControl={
-            <RefreshControl
-                refreshing={refreshing}
-                onRefresh={onRefresh}
-            />
-        }>
-            {isAddList &&
-                <AddFilmToListModal isAddList={isAddList} setIsAddList={setIsAddList} film={chosenFilm}/>}
-            <View>
+
+
                 <ImageBackground
                     source={{uri: IMG_URI + state.selected.backdrop_path}}
                     resizeMode="cover" style={{
-                    flex: 1, height: 200,
+                    shadowOffset: {width: 10, height: 10},
+                    shadowColor: "white",
+                    shadowOpacity: 1.0,
+                    flex: 1,
                     justifyContent: "center",
-                }}>
 
+                }} blurRadius={3}>
+
+                    {isAddList &&
+                        <AddFilmToListModal isAddList={isAddList} setIsAddList={setIsAddList} film={chosenFilm}/>}
+                    {isTrailersOpen&& <TrailersModal setIsOpen={setIsTrailersOpen} isOpen={isTrailersOpen} trailers={trailer}/>}
+                    <ScrollView  style={{backgroundColor:'rgba(0,0,0,.7)'}}>
 
                     <Image source={{uri: IMG_URI + state.selected.poster_path}} style={{
-                        width: 100,
-                        height: 150, left: 20,
+                        width: 270,
+                        height: 400,
+                        alignSelf:'center',
+                        marginTop:50,
                         shadowOffset: {width: 10, height: 10},
                         shadowColor: "white",
                         shadowOpacity: 1.0,
-                        borderColor: "black", borderWidth: 2, borderRadius: 10,
-                    }} resizeMode="cover"/>
-                    <View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',width:100,alignSelf:'flex-end',marginRight:5}}>
+                        borderColor: "black",   borderRadius: 10,
+                    }} resizeMode="contain"/>
 
-                        <AntDesign name="heart" size={30}
-                                   color={isFilmAddedToFavoriteList(chosenFilm.filmId) ? "green" : "white"} style={{
-                            // thumb-up-alt
-                            alignSelf: "flex-start", left: 10,
-                        }} onPress={async () => {
-                            if (!isFilmAddedToFavoriteList(chosenFilm.id)) {
-                                console.log(!isFilmAddedToFavoriteList(chosenFilm.id))
-
-                                await addFilmToFavoriteList(userData.favoriteList, chosenFilm)
-                            } else {
-                                console.log(!isFilmAddedToFavoriteList(chosenFilm.id))
-                                await deleteFilmFromFavoriteList(userData.favoriteList, chosenFilm)
-
-                            }
-
-                        }}/>
-                        <MaterialIcons name="library-add" size={30} color="white"
-
-                                       onPress={() => {
-                                           setIsAddList(true)
-                                       }}/>
-                    </View>
-                </ImageBackground>
-
-
-            </View>
             <View style={details.mainDetailView}>
-                <View style={{flexDirection: 'row', justifyContent: 'space-around' }}>
-                    <View style={{flexDirection: 'column', justifyContent: 'space-around',alignItems:'center'}}>
-                        <Text style={{...details.name, ...{marginTop: 10}}}>
 
-                    {state.selected.title}
-                </Text>
+                    <View style={{flexDirection: 'column', justifyContent: 'space-around',alignItems:'center',padding:10}}>
+                        <Text style={{...details.name, ...{marginTop: 10}}}>
+                            {state.selected.title}
+                        </Text>
 
                     <Text style={ details.name} >
 
                         ({state.selected.original_title})
                     </Text>
+                        <Text style={{...details.text, ...{alignSelf: "center", flexDirection: "row",alignItems:'center',textAlign:'center'}}}><Text
+                            style={details.text}>{state.genres?.map((rat, index) => (<View key={index} >
+                            <Text style={{color:'white',textAlign:'center' }}>{rat.name} {index<state.genres?.length-1&&<FontAwesome name="circle"/>}   </Text>
 
+                        </View>))}</Text></Text>
+                        <Text style={{...details.text, ...{alignSelf: "center"}}}>
+                            {state.selected.release_date}({state.studio.map((x,index) => <Text key={index}>{x.iso_3166_1}</Text>)})
+                            <FontAwesome name="circle"/> {state.selected.runtime}min</Text>
                     </View>
 
+                <View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',width:100,alignSelf:'center',marginRight:10 }}>
+
+                    <AntDesign name="heart" size={30}
+                               color={userData.favoriteList.films.filter(film => film.filmId === chosenFilm.filmId).length !== 0 ? "green" : "white"} style={{
+                        // thumb-up-alt
+                        alignSelf: "flex-start", left: 10,
+                    }} onPress={ () => {
+                        if (userData.favoriteList.films.filter(film => film.filmId === chosenFilm.filmId).length === 0) {
+                            console.log('true')
+                            setUserData({...userData,favoriteList:{...userData.favoriteList,films:[...userData.favoriteList.films,chosenFilm]}})
+                            addFilmToFavoriteList(userData.favoriteList, chosenFilm)
+                        } else {
+                            console.log('del')
+                            deleteFilmFromFavoriteList(userData.favoriteList, chosenFilm)
+                            setUserData({...userData,favoriteList:{...userData.favoriteList,films:userData.favoriteList.films.filter(film => film.filmId !== chosenFilm.filmId)}})
+
+                        }
+
+                    }}/>
+                    <MaterialIcons name="library-add" size={30} color="white"
+
+                                   onPress={() => {
+                                       console.log("true")
+                                       setIsAddList(true)
+                                   }}/>
                 </View>
 
                 <View style={{padding: 20, paddingTop: 10,alignSelf:'center'}}>
@@ -221,14 +244,16 @@ const DetailFilm = ({route}) => {
                             isDisabled
                         />
                     </View>
-                    <Text style={{...details.text, ...{alignSelf: "center"}}}>
-                        {state.selected.release_date}({state.studio.map(x => x.iso_3166_1)})
-                        * {state.selected.runtime}min</Text>
-                    <Text style={{...details.text, ...{alignSelf: "center", flexDirection: "row"}}}><Text
-                        style={details.text}>{state.genres.map((rat, index) => (<>
-                        <Text key={index}>{rat.name} / </Text>
-
-                    </>))}</Text></Text>
+                    <Text style={{...details.text, ...{fontSize: 20}}}> Трейлеры:</Text>
+                    <View style={{padding:20}}>
+                        {/*<YoutubePlayer*/}
+                        {/*    height={200}*/}
+                        {/*    play={playing}*/}
+                        {/*    videoId={trailer[0].key}*/}
+                        {/*    onChangeState={onStateChange}*/}
+                        {/*/>*/}
+                        {trailer.length>1&&<Text style={{color:'white'}} onPress={()=>setIsTrailersOpen(true)}>Смотреть все ></Text>}
+                    </View>
 
 
                     <View style={{padding: 20}}>
@@ -239,10 +264,10 @@ const DetailFilm = ({route}) => {
 
                     <View style={{flexDirection: "row", justifyContent: "space-between"}}>
                         <Text style={details.text}>Страны:{"\n"}<Text
-                            style={details.text}>{state.studio.map((rat, index) => (<>
-                            <Text key={index}>   {rat.name}{"\n"} </Text>
+                            style={details.text}>{state.studio.map((rat, index) => (<View key={index}>
+                            <Text style={{color:'white'}}>   {rat.name}{"\n"} </Text>
 
-                        </>))}</Text></Text>
+                        </View>))}</Text></Text>
                         <Text style={details.text}>Бюджет: <Text
                             style={details.text}>{state.selected.budget}$</Text></Text>
                     </View>
@@ -250,6 +275,7 @@ const DetailFilm = ({route}) => {
                 </View>
 
             </View>
+
             <FilmPeople cast={cast} crew={crew} navigation={navigation}/>
             {reviews.length!==0&&
             <View style={details.detailReviews}>
@@ -259,7 +285,7 @@ const DetailFilm = ({route}) => {
                         {
                             reviews.map((review, index) => (
 
-                                <TouchableOpacity style={details.textReviews}>
+                                <TouchableOpacity key={index} style={details.textReviews}>
                                     <View style={{flexDirection: "row"}}>
                                         <Text style={{...details.textActors, ...{fontSize: 18}}}>{review.author}</Text>
                                     </View>
@@ -276,33 +302,38 @@ const DetailFilm = ({route}) => {
                 </View>
             </View>}
             <SimilarFilms similarFilms={similarFilms} navigation={navigation}/>
-        </ScrollView>
 
+        </ScrollView>
+</ImageBackground>
     )
         ;
 };
+
 export const FilmPeople = ({crew, cast, navigation}) => {
     const {screenTheme} = useTheme();
     const details = screenTheme;
     return (
         <View style={{padding: 20}}>
-            <Text style={details.titles}>Режиссёры и сценаристы:</Text>
+            {crew.length!==0&&
+            <Text style={{...details.titles, ...{color:'white'}}}>Режиссёры и сценаристы:</Text>}
             <FlatList
                 style={{marginBottom: 30}}
                 horizontal={true}
+                keyExtractor={(item, index) => 'key'+index}
                 data={crew.filter(item => item.job === "Screenplay" || item.job === "Director" || item.job === "Producer" || item.job === "Original Music Composer")}
                 renderItem={({item, index}) =>
-                    <RenderCastItem item={item} index={index} navigation={navigation}/>
+                    <RenderCastItem  item={item} index={index} navigation={navigation}/>
                 }
                 initialNumToRender={10}
             />
-            <Text style={details.titles}>Каст:</Text>
+            <Text style={{...details.titles, ...{color:'white'}}}>Каст:</Text>
             <FlatList
                 style={{marginBottom: 30}}
                 horizontal={true}
                 data={cast}
-                renderItem={({item}) =>
-                    <RenderCastItem item={item} navigation={navigation}/>
+                keyExtractor={(item, index) => 'key'+index}
+                renderItem={({item,index}) =>
+                    <RenderCastItem item={item} navigation={navigation} index={index}/>
                 }
                 initialNumToRender={10}
             />
@@ -316,7 +347,7 @@ export const SimilarFilms = ({similarFilms, navigation,isSerial}) => {
         <View style={{padding: 20}}>
 
 
-            <Text style={screenTheme.titles}>Похожие фильмы:</Text>
+            <Text style={{...screenTheme.titles, ...{color:'white'}}}>{isSerial?"Похожие сериалы:":"Похожие фильмы:"}</Text>
             <FlatList
                 style={{marginBottom: 30}}
                 horizontal={true}
@@ -347,10 +378,10 @@ export const RenderCastItem = ({item, navigation, index}) => {
                           }}>
             <Image source={item.profile_path ? {uri: IMG_URI + item.profile_path} : {uri: NONAME_IMG}}
                    style={{
-                       height: 150,
+                       height: 170,
                        width: 130,
-                       borderTopRightRadius: 5,
-                       borderTopLeftRadius: 5,
+                       borderRadius: 20,
+
                    }}/>
 
 
@@ -359,27 +390,27 @@ export const RenderCastItem = ({item, navigation, index}) => {
         </TouchableOpacity>
     )
 }
-export const RenderSimilarItem = ({item, navigation,isSerial}) => {
+export const RenderSimilarItem = ({item,  isSerial}) => {
     const {screenTheme} = useTheme()
+    const navigation=useNavigation()
     const details = screenTheme;
     return (
-        <TouchableOpacity key={item.id} style={details.similarFilms} onPress={() => navigation.push("DetailFilm", {
+        <TouchableOpacity key={item.id} style={details.similarFilms} onPress={() => navigation.navigate(isSerial?"DetailSerial":"DetailFilm", {
             id: item.id,
-            navigation: navigation,title: isSerial?item.name:item.title
+             title: isSerial?item.name:item.title
         })}>
             <ImageBackground source={{uri: IMG_URI + item.poster_path}}
                              style={{
-                                 width: 220,
-                                 height: 220,
-                                 borderTopRightRadius: 5,
-                                 borderTopLeftRadius: 5,
+                                 height: 320,
+                                 width:200,
+                                 borderRadius:20,
                                  backgroundSize: "cover",
                                  backgroundPositionX: "50%",
                                  backgroundPositionY: "50%",
                              }}/>
 
 
-            <Text style={details.text}>{isSerial?item.name:item.title}</Text>
+            <Text style={{...details.text, ...{textAlign:'center',color:'white'}}}>{isSerial?item.name:item.title}</Text>
 
         </TouchableOpacity>
     )

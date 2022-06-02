@@ -29,10 +29,12 @@ const Login = ({navigation}) => {
     };
     useEffect(() => {
         // If there is a user logged in, go to the Projects page.
-
+        if (user !== null) {
             navigation.navigate("HomeScreen")
+        }
 
     }, [user]);
+
     const validatePassword = password => {
         let re = /[0-9]+/;
         return re.test(password);

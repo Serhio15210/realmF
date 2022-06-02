@@ -1,4 +1,4 @@
-import React, {useCallback, useContext, useEffect, useMemo, useRef, useState} from "react";
+import React, {useCallback, useContext, useEffect, useMemo, useRef, useState,memo} from "react";
 import {
       LogBox, RefreshControl,
 
@@ -57,19 +57,19 @@ const HomeFilmsScreen = ({ navigation }) => {
     //     }, [])
     // );
 
-    useEffect(async () => {
+    useEffect( () => {
         LogBox.ignoreLogs(["VirtualizedLists should never be nested"])
         try {
 
-            await GetFilms.getSoonMovies().then((response) => {
+             GetFilms.getSoonMovies().then((response) => {
                 setSoonData(response.results)
 
             });
-            await GetFilms.getPremiereMovies().then((response) => {
+             GetFilms.getPremiereMovies().then((response) => {
                 setPremierData(response.results)
 
             });
-            await GetFilms.getPopularMovies().then((response) => {
+            GetFilms.getPopularMovies().then((response) => {
                 setPopularData(response.results)
 
             });
@@ -102,9 +102,9 @@ const HomeFilmsScreen = ({ navigation }) => {
             <HomeFilmsList data={soonData} name="soonData" navigation={navigation} isLoading={isLoading} />
 
 
-            <HomeFilmsList data={premierData} name={"premierData"} navigation={navigation} isLoading={isLoading} />
-            <HomeFilmsList data={popularData} name={"popularData"} navigation={navigation} isLoading={isLoading} />
-            <MyHomeLists navigation={navigation}/>
+            <HomeFilmsList data={premierData} name={"premierData"}   isLoading={isLoading} />
+            <HomeFilmsList data={popularData} name={"popularData"}  isLoading={isLoading} />
+            <MyHomeLists  />
 
 
         </ScrollView>

@@ -31,22 +31,21 @@ const AddFilmToListModal = ({isAddList,setIsAddList,film}) => {
                     }}  onPress={()=>setIsAddList(false)}/>
                 </View>
 
-                <View style={{flexDirection:'row',flexWrap:"wrap",justifyContent:'space-around'}} >
-                    {userLists.map(item=>{
+                <View style={{flexDirection:'row',flexWrap:"wrap" }} >
+                    {userLists.map((item,index)=>{
 
                         return (
-                            <TouchableOpacity style={{padding:10,flexDirection:'row'}}  onPress={async () =>{
+                            <TouchableOpacity key={index} style={{padding:10,flexDirection:'row'}}  onPress={async () =>{
                                 if (ifFilmWasAddedToList(item.listId)){
                                     await addFilmToList(item.listId,film)
                                     setIsAddList(false)
                                 }else {
                                     alert("Film has already added ")
                                 }
-
                             }}
                                  >
                                 <View style={{alignSelf:'flex-start'}}>
-                                    <ListPoster list={item} height={100} width={100}/>
+                                    <ListPoster list={item} height={150} width={130}/>
                                 </View>
 
                                 <Text  style={{padding: 10, color: isDarkTheme ? "#DAA520" : "white", fontWeight: "bold",alignSelf:'center'}}>{item.name}</Text>

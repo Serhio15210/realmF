@@ -1,7 +1,7 @@
-import React, { useContext, useRef, useState } from "react";
+import React, {useContext, useEffect, useRef, useState} from "react";
 import {
   ActivityIndicator,
-  Dimensions,
+  Dimensions, FlatList,
   Image,
   ImageBackground,
   StyleSheet,
@@ -22,12 +22,13 @@ import {addFilmToFavoriteList, deleteFilmFromFavoriteList} from "../../controlle
 import {useAuth} from "../../providers/AuthProvider";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import {useTheme} from "../../providers/ThemeProvider";
+import {useNavigation} from "@react-navigation/native";
 
-
-const HomeFilmsList = ({ data, name, navigation, isLoading }) => {
+const HomeFilmsList = ({ data, name, isLoading }) => {
   const { isDarkTheme, screenTheme } = useTheme();
   const [isAddList,setIsAddList] =useState(false)
-  const {userData}=useAuth()
+  const navigation=useNavigation()
+  const {userData,setUserData}=useAuth()
   const focusPoint = useRef(null);
   const title = name === "soonData" ? "Скоро в кино!" : name === "premierData" ? "Премьеры" : name === "popularData" ? "Сейчас смотрят" : "";
   const [chosenFilm,setChosenFilm]=useState({
@@ -36,23 +37,17 @@ const HomeFilmsList = ({ data, name, navigation, isLoading }) => {
     filmId: ''
   })
   const { width: windowWidth } = useWindowDimensions();
-
-
-  const carouselRef = useRef(null);
-  const isFilmAddedToFavoriteList=(filmId)=>{
-      return userData?.favoriteList?.films.filter(film=>film.filmId===filmId).length!==0
-  }
-
-
+  const [activeFilm, setActiveFilm] = useState([])
+  useEffect(()=>{
+    setActiveFilm(userData?.favoriteList?.films)
+  },[userData?.favoriteList?.films])
 
   const renderItem = ({ item, index }) => {
     return (
-      <View>
+      <View key={index} style={{margin:5}}>
         <TouchableOpacity
           onPress={() => {
-            carouselRef.current.scrollToIndex(index);
-
-            navigation.navigate("DetailFilm", { id: item.id, navigation: navigation, title: item.title });
+            navigation.navigate("DetailFilm", { id: item.id, title: item.title });
           }
           }
         >
@@ -60,7 +55,6 @@ const HomeFilmsList = ({ data, name, navigation, isLoading }) => {
 
           <MaterialIcons name="library-add" size={30}  color="white" style={screenTheme.carouselIcon}
           onPress={()=>{
-
             setChosenFilm({
               title: item.original_title,
               poster: item.poster_path,
@@ -68,28 +62,33 @@ const HomeFilmsList = ({ data, name, navigation, isLoading }) => {
             })
             setIsAddList(true)
           }}/>
-          <AntDesign name="heart" size={30} color={ 'white'} style={{
+          <AntDesign name="heart" size={30} color={ userData.favoriteList?.films?.filter(film => film.filmId === item.id).length!==0?"green":'white'} style={{
             // thumb-up-alt
             position: "absolute",
             top: 15,
             alignSelf: "flex-start", left: 10,
-          }} onPress={async () => {
+          }} onPress={ () => {
+            if (activeFilm.filter(film => film.filmId === item.id).length !== 0) {
+              deleteFilmFromFavoriteList(userData.favoriteList, {
+                title: item.original_title,
+                poster: item.poster_path,
+                filmId: item.id
+              })
+              setUserData({...userData,favoriteList:{...userData.favoriteList,films:userData.favoriteList.films.filter(film => film.filmId !== item.id)}})
 
-            setChosenFilm({
-              title: item.original_title,
-              poster: item.poster_path,
-              filmId: item.id
-            })
-            if (!isFilmAddedToFavoriteList(item.id)) {
-              console.log(!isFilmAddedToFavoriteList(item.id))
-
-              // await addFilmToFavoriteList(userData.favoriteList, chosenFilm)
             } else {
-              console.log(!isFilmAddedToFavoriteList(item.id))
-              // await deleteFilmFromFavoriteList(userData.favoriteList, chosenFilm)
 
+              addFilmToFavoriteList(userData.favoriteList, {
+                title: item.original_title,
+                poster: item.poster_path,
+                filmId: item.id
+              })
+              setUserData({...userData,favoriteList:{...userData.favoriteList,films:[...userData.favoriteList.films,{
+                    title: item.original_title,
+                    poster: item.poster_path,
+                    filmId: item.id
+                  }]}})
             }
-
           }} />
         </TouchableOpacity>
         <Text style={screenTheme.carouselText}>{item.title}</Text>
@@ -107,11 +106,11 @@ const HomeFilmsList = ({ data, name, navigation, isLoading }) => {
                          style={DefaultStyles.ImageBg} blurRadius={10}>
 
           <View style={screenTheme.listTitle}>
-            <View style={{ width: "50%" }}>
-              <Text style={screenTheme.listTitleText}>{title}</Text>
-            </View>
-            <TouchableOpacity style={{ width: "50%", alignItems: "flex-end", justifyContent: "center", right: 15 }}
-                              onPress={() => navigation.navigate("ListOfFilms", { data:data, title:title, navigation:navigation })}>
+
+              <Text numberOfLines={1} style={screenTheme.listTitleText}>{title}</Text>
+
+            <TouchableOpacity style={{  justifyContent: "center" }}
+                              onPress={() => navigation.navigate("ListOfFilms", { data:data, title:title })}>
               <Text style={screenTheme.viewAll}>См.Все</Text></TouchableOpacity>
           </View>
           {isLoading ?
@@ -121,15 +120,14 @@ const HomeFilmsList = ({ data, name, navigation, isLoading }) => {
             }}>
               <ActivityIndicator size="large" color={isDarkTheme?"#DAA520":"#DC143C"} /></View> :
             <View style={screenTheme.carouselContainerView}>
-              <Carousel style={screenTheme.carousel}
+              <FlatList
+                        horizontal={true}
                         data={data}
                         renderItem={renderItem}
-                        itemWidth={200}
-                        separatorWidth={0}
-                        ref={carouselRef}
-                        inActiveOpacity={0.4}
-                pagingEnable={false}
-                minScrollDistance={10}
+                        rowWrapperStyle={{justifyContent: 'space-between'}}
+                        keyExtractor={(item, index) => `key-${index}`}
+
+
               />
             </View>}
 

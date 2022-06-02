@@ -16,7 +16,7 @@ const Welcome = () => {
 
         <NavigationContainer theme={theme} >
             <Stack.Navigator
-
+                initialRouteName="Login"
                 screenOptions={{
                     headerStyle: {
                         backgroundColor: colors.primary,

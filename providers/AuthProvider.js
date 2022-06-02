@@ -2,24 +2,9 @@ import React, {useContext, useState, useEffect, useRef, useMemo} from "react";
 import Realm from "realm";
 import app from "../realmApp";
 import {createUser, getCurrentUserData, getCurrentUserLists} from "../controllers/UserController";
-import * as NavigationDefaultTheme from "../pages/styles";
-import * as PaperDefaultTheme from "../pages/styles";
-import * as NavigationDarkTheme from "../pages/styles";
-import * as PaperDarkTheme from "../pages/styles";
-import {DarkThemeStyles} from "../styles/darkstyles";
-import {DefaultStyles} from "../styles/defaultstyles";
-
-
-// Create a new Context object that will be provided to descendants of
-// the AuthProvider.
 const AuthContext = React.createContext(null);
 
-// The AuthProvider is responsible for user management and provides the
-// AuthContext value to its descendants. Components under an AuthProvider can
-// use the useAuth() hook to access the auth value.
 const AuthProvider = ({children}) => {
-
-
   const [user, setUser] = useState(app.currentUser);
   const [userData, setUserData] = useState({
     username:'',
@@ -30,24 +15,25 @@ const AuthProvider = ({children}) => {
     subscriptions:[]
   });
   const [userLists,setUserLists]=useState([])
-  useMemo(async () => {
-
-    setUserLists(await getCurrentUserLists(userData.lists.map(data => data.listId)))
+  useMemo( () => {
+    getCurrentUserLists().then(data=>setUserLists(data))
+    console.log('list',userData.lists)
     // setUserData({...userData,lists:userLists})
-  },[])
-  useEffect(async () => {
-    if (!user) {
+  },[userData])
+
+  useEffect( () => {
+    if (user===null) {
       return;
     }
-    const newUserData = await getCurrentUserData()
-    setUserData({ username: newUserData.username,lists: newUserData.lists,favoriteList:newUserData.favoriteList,userID:newUserData.userID,subscriptions: newUserData.subscriptions,subscribers: newUserData.subscribers})
+    getCurrentUserData().then(newUserData=>
+    setUserData({ username: newUserData.username,lists: newUserData.lists,favoriteList:newUserData.favoriteList,userID:newUserData.userID,subscriptions: newUserData.subscriptions,subscribers: newUserData.subscribers}))
 
   }, []);
 
 
   const signIn = async (email, password) => {
     // TODO: Pass the email and password to Realm's email password provider to log in.
-    // Use the setUser() function to set the logged-in user.
+
     const creds = Realm.Credentials.emailPassword(email, password);
     const newUser = await app.logIn(creds)
     setUser(newUser);

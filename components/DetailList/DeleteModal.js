@@ -1,10 +1,13 @@
 import React from 'react';
-import {Alert, Modal, Pressable, Text, View} from "react-native";
-import {deleteList} from "../../controllers/UserController";
+import {Alert, Dimensions, Modal, Pressable, Text, View} from "react-native";
+import {deleteList} from "../../controllers/ListController";
 import {CommonActions, useNavigation} from "@react-navigation/native";
+import {useAuth} from "../../providers/AuthProvider";
 
 const DeleteModal = ({isDelList, setIsDelList,listId,name}) => {
     const navigation=useNavigation()
+    const {setUserData,userData}=useAuth()
+
     return (
 
         <Modal
@@ -17,14 +20,19 @@ const DeleteModal = ({isDelList, setIsDelList,listId,name}) => {
             }}
 
         >
-            <View style={{backgroundColor:"#DC143C",height:150,padding:10,alignSelf:'center',borderWidth:2,borderRadius:10,marginTop:200}} >
-                <Text style={{color:"white",fontSize:30,marginBottom:20}}>Are you sure to delete {name}?</Text>
-                <View style={{flexDirection:'row',justifyContent:'space-around'}} >
+            <View style={{backgroundColor:'rgba(0,0,0,.5)',flex:1}}>
+                <View style={{width: Dimensions.get('window').width-50,borderRadius: 20,backgroundColor:'#DC143C',position: 'absolute',top:'30%',alignSelf:'center',alignItems:'center',padding:30,height:300,justifyContent:'space-between'}}>
 
+                <Text style={{color:"white",fontSize:30,marginBottom:20,textAlign:'center'}}>Are you sure to delete {name}?</Text>
+                <View style={{flexDirection:'row',justifyContent:'space-between',width:'100%'}} >
                     <Pressable
-
                         onPress={async () => {
+
                             await deleteList(listId)
+                            setUserData({
+                                ...userData,
+                                lists: userData.lists.filter(item => item.listId.toString() !== listId.toString())
+                            })
                             Alert.alert(`List ${name} was deleted!`)
                             setIsDelList(!isDelList)
                             navigation.goBack()
@@ -40,6 +48,7 @@ const DeleteModal = ({isDelList, setIsDelList,listId,name}) => {
                         <Text style={{color:"white",fontSize:20}}>Cancel</Text>
                     </Pressable>
                 </View>
+            </View>
             </View>
         </Modal>
 

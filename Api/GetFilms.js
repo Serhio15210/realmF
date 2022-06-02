@@ -89,5 +89,14 @@ export default class GetFilms {
       console.log(error)
     }
   }
+  static async getTrailer(movie_id){
+    try {
+      const response=await fetch(`https://api.themoviedb.org/3/movie/${movie_id}/videos?api_key=${API_KEY}&language=ru`)
+      const trailer=await response.json()
+      return trailer.results
+    }catch (error){
+      console.log(error)
+    }
+  }
 }
 

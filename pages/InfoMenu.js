@@ -39,7 +39,7 @@ export  function DrawerContent(props) {
     const heightTop = openTop ? "auto" : 0
     const heightListsTop = openListsTop ? "auto" : 0
     const {signOut, userData, setUserData,userLists} = useAuth();
-
+    const navigation=useNavigation()
 
 
     // const favoriteList=userData.lists.shift()
@@ -57,15 +57,7 @@ export  function DrawerContent(props) {
             <DrawerContentScrollView {...props}>
                 <View style={styles.drawerContent}>
                     <View style={styles.userInfoSection}>
-                        <TouchableOpacity style={{flexDirection: 'row', marginTop: 15}} onPress={()=>{
-                            props.navigation.closeDrawer()
-                            props.navigation.dispatch(CommonActions.reset({
-                                index: 1,
-                                routes: [{name: "HomeScreen"}, {name: "Profile",params:{
-                                    navigation:props.navigation
-                                    }}]
-                            }))
-                        }}>
+                        <TouchableOpacity style={{flexDirection: 'row', marginTop: 15}} >
                             <Avatar.Image
                                 source={{
                                     uri: NONAME_IMG
@@ -241,7 +233,10 @@ export  function DrawerContent(props) {
                             )}
                             label="Профиль"
                             onPress={() => {
-                                props.navigation.navigate('Profile')
+                                props.navigation.dispatch(CommonActions.reset({
+                                    index: 0,
+                                    routes: [{name: "Profile"}, ]
+                                }))
                             }}
                         />
 

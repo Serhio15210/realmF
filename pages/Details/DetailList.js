@@ -20,6 +20,8 @@ import ListFilms from "../../components/DetailList/ListFilms";
 import {useTheme} from "../../providers/ThemeProvider";
 import {getUserListById, updateListName} from "../../controllers/ListController";
 import {getCurrentUserData} from "../../controllers/UserController";
+import AntDesign from "react-native-vector-icons/AntDesign";
+import Ionicons from "react-native-vector-icons/Ionicons";
 
 
 
@@ -36,43 +38,41 @@ const DetailList = ({route}) => {
     const [isListChanged, setIsListChanged] = useState(false);
     const [isAddFilm, setIsAddFilm] = useState(false)
     const [isDelList, setIsDelList] = useState(false)
+    const [isChangeList, setIsChangeList] = useState(false)
     const [movieQuery, setMovieQuery] = useState("");
     const [nameQuery, setNameQuery] = useState(listData.name)
     const {screenTheme, isDarkTheme} = useTheme()
     const {userData, userLists} = useAuth();
     const [page, setPage] = useState(1);
+    const [filteredFilms,setFilteredFilms]=useState([])
+    useEffect(()=>{
+        setFilteredFilms(listData.films)
 
-    const filteredFilms =
-        listData.films.filter(post => {
-            return post.title.toLowerCase().includes(movieQuery.toLowerCase())
-        })
+    },[movieQuery,userData,listData])
 
-    useEffect( async () => {
-
+    useEffect(  () => {
         try {
-
-
             if (title !== userData.favoriteList.name) {
 
-                   await getUserListById(id).then(data => {
+                    getUserListById(id).then(data => {
 
                     setListData({
                         listId: data[0]?.listId,
                         name: data[0]?.name,
-                        films: data[0].films || []
+                        films: data[0]?.films || []
                     })
+                        setFilteredFilms(data[0].films)
 
                 })
 
             } else {
-                 await getCurrentUserData().then(newUserData=>{
-
-
+                  getCurrentUserData().then(newUserData=>{
                   setListData({
                     listId: newUserData.favoriteList.listId,
                     name: newUserData.favoriteList.name,
                     films: newUserData.favoriteList.films || []
                 })
+                      setFilteredFilms(newUserData.favoriteList.films)
                  })
             }
 
@@ -82,12 +82,12 @@ const DetailList = ({route}) => {
             console.log(error)
         }
 
-    }, [isListChanged,userData]);
+    }, [userData]);
 
 
     return (
 
-            loading ?
+            !listData.name ?
                 <View style={{
                     flex: 1,
                     justifyContent: "center",
@@ -97,93 +97,94 @@ const DetailList = ({route}) => {
             <DeleteModal listId={listData.listId} name={listData.name} isDelList={isDelList}
                          setIsDelList={setIsDelList} />
 
-            <View>
-                <View style={{alignItems: 'center'}}>
-                    <ListPoster list={title === userData.favoriteList.name ? [] : listData} height={150} width={150}/>
-                </View>
+            <View style={{padding:20}}>
 
+                <View style={{flexDirection:'row'}}>
+                    <ListPoster list={title === userData.favoriteList.name?[]:listData} height={150} width={150} favorite={title === userData.favoriteList.name}/>
+                    <View >
 
-                        <View style={{margin: 10}}>
+                        <View >
                             {
                                 isEdit ?
-                                    <View style={{flexDirection: 'row'}}>
+                                    <View style={{flexDirection: 'row',alignItems:'center'}}>
                                         <TextInput style={{
                                             fontWeight: "700",
                                             marginBottom: 5,
-                                            color: "black",
+                                            color: isDarkTheme?'white':"black",
                                             fontSize: 25,
-                                            borderWidth: 2
-                                        }} placeholder={`Enter a list name...`} value={nameQuery}
+                                            borderBottomWidth: 2,
+                                            marginLeft:10,
+                                            width:180
+                                        }} placeholder={`Enter a list name...`} defaultValue={title}
                                                    onChangeText={text => setNameQuery(text)}/>
-                                        <TouchableOpacity onPress={async () => {
+                                        <TouchableOpacity onPress={ () => {
                                             setListData({...listData, name: nameQuery || listData.name})
-                                            await updateListName(nameQuery, listData.listId)
+                                            updateListName(nameQuery, listData.listId)
                                             setIsEdit(false)
                                         }}>
-                                            <Icon name="delete" size={30} color="#900"/>
+                                            <AntDesign name="save" size={30} color={isDarkTheme?'#DAA520':'#DC143C'}/>
 
                                         </TouchableOpacity>
-                                    </View>
-                                    :
+                                    </View>:
+                                    <Text
+                                        style={{...screenTheme.detailListName,marginLeft:10}}>
+                                        {listData.name}
+                                    </Text>}
 
-                                    <View style={{flexDirection: 'row',justifyContent:'space-between'}}>
-                                        <View style={{flexDirection:'row',alignItems:'center'}}>
-                                        <Text
-                                            style={screenTheme.detailListName}>
-                                            {listData.name}
-                                        </Text>
-                                        {title !== userData.favoriteList.name &&
-                                            <TouchableOpacity onPress={() => setIsEdit(true)} style={screenTheme.detailListEditButton}
-                                            >
-                                                <Text style={screenTheme.detailListButtonsText}>edit</Text>
+                        <View style={{flexDirection: 'row', paddingLeft: 10}}>
+                            <Avatar.Image
+                                source={{
+                                    uri: NONAME_IMG
+                                }}
+                                size={30}
+                            />
+                            <View style={{marginLeft: 15}}>
+                                <Title
+                                    style={{
+                                        color: isDarkTheme ? "white" : "black", fontSize: 16,
 
-                                            </TouchableOpacity>}
-                                        </View>
-                                        <TextInput style={screenTheme.detailListFindButton} placeholder={`Enter a movie...`} placeholderTextColor={isDarkTheme?"#666":"black"} value={movieQuery}
+                                        fontWeight: 'bold'
+                                    }}>{userData.username}</Title>
 
-                                                   onChangeText={text => setMovieQuery(text)}
-                                        >
-                                        </TextInput>
-                                    </View>
-                            }
+                            </View>
+
                         </View>
-
-                <View style={{flexDirection: 'row', paddingLeft: 10}}>
-                    <Avatar.Image
-                        source={{
-                            uri: NONAME_IMG
-                        }}
-                        size={30}
-                    />
-                    <View style={{marginLeft: 15, flexDirection: 'column'}}>
-                        <Title
-                            style={{
-                                color: isDarkTheme ? "white" : "black", fontSize: 16,
-                                marginTop: 3,
-                                fontWeight: 'bold'
-                            }}>{userData.username}</Title>
-
+                            {isEdit&&title !== userData.favoriteList.name &&
+                                <TouchableOpacity style={{...screenTheme.detailListDelButton,marginLeft:10}}
+                                                  onPress={() => setIsDelList(true)}>
+                                    <Text style={{color:isDarkTheme?'white':'black'}}>Delete List</Text>
+                                </TouchableOpacity>}
                     </View>
 
                 </View>
+
+                        </View>
+                <View style={{flexDirection: 'row',justifyContent:'space-between'}}>
+
+                    <TextInput style={screenTheme.detailListFindButton} placeholder={`Enter a movie...`} placeholderTextColor={isDarkTheme?"#666":"black"} value={movieQuery}
+
+                               onChangeText={text => setMovieQuery(text)}
+                    >
+                    </TextInput>
+                    {title !== userData.favoriteList.name &&<TouchableOpacity style={{alignItems: 'center', alignSelf: "flex-end",padding:10,backgroundColor:isDarkTheme?'#333333':'white',borderRadius:10,elevation:10 }}
+                                      onPress={ () => {
+                                          setIsEdit(!isEdit)
+                                      }}>
+                        <AntDesign name={isEdit?"close":"edit"} size={20} color={isDarkTheme?'#DAA520':'black'} />
+                    </TouchableOpacity>}
+                </View>
+
                 <View style={{flexDirection: 'row', width: "100%",justifyContent:'space-between'}}>
+                    {!isAddFilm && <TouchableOpacity style={{alignItems: 'center', alignSelf: "flex-end",padding:5,backgroundColor:isDarkTheme?'#333333':'white',borderRadius:10,elevation:10,borderWidth:1,borderColor: isDarkTheme?"#DAA520":"#DC143C"}}
+                                                     onPress={() => setIsAddFilm(true)}>
+                        <Ionicons name="add" size={30} style={{alignSelf:'center'}} color={isDarkTheme?'#DAA520':'black'}/>
+                    </TouchableOpacity>}
                     <TouchableOpacity style={screenTheme.detailListSortButton}>
                         <Text style={screenTheme.detailListButtonsText}>Sort</Text>
                     </TouchableOpacity>
 
-                    {!isAddFilm && <TouchableOpacity style={screenTheme.detailListAddButton}
-                                                     onPress={() => setIsAddFilm(true)}>
-                        <Text style={{...screenTheme.detailListButtonsText,...{fontSize: 30}}}>+</Text>
-                    </TouchableOpacity>}
-                    {title !== userData.favoriteList.name &&
-                        <TouchableOpacity style={screenTheme.detailListDelButton}
-                                          onPress={() => setIsDelList(true)}>
-                            <Text style={screenTheme.detailListButtonsText} >Del</Text>
-                        </TouchableOpacity>}
 
                 </View>
-
-
             </View>
 
             {
@@ -196,7 +197,7 @@ const DetailList = ({route}) => {
                             justifyContent: "center",
                         }}>
                             <ActivityIndicator size="large" color={isDarkTheme?"#DAA520":"#DC143C"}/></View> :
-                        <ListFilms filteredFilms={filteredFilms} isEdit={isEditList} setIsEdit={setIsEditList} listData={listData} setListData={setListData}/>
+                        <ListFilms filteredFilms={filteredFilms} isEdit={isEdit}  listData={listData} setListData={setListData} isList={true} />
             }
 
 

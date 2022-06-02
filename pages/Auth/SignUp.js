@@ -9,7 +9,7 @@ import {
     TouchableWithoutFeedback,
     Keyboard,
     ScrollView,
-    KeyboardAvoidingView, Alert
+    KeyboardAvoidingView, Alert, ActivityIndicator
 } from "react-native";
 
 
@@ -28,6 +28,7 @@ const Signup = ({ navigation }) => {
     const [rePassword, setRePassword] = useState("");
     const [message, setMessage] = useState("");
     const [showPassword, setShowPassword] = useState(false);
+    const [isLoading, setLoading] = useState(false);
     const { user, signUp } = useAuth();
     const [users,setUsers]=useState([])
     const validateEmail = email => {
@@ -50,6 +51,7 @@ const Signup = ({ navigation }) => {
 
 
     const handleSubmit = async () => {
+        // setLoading(true)
         if (
             email === "" ||
             username === "" ||
@@ -76,8 +78,11 @@ const Signup = ({ navigation }) => {
             } catch (err) {
                 Alert.alert(`Failed to sign up: ${err.message}`);
                 console.log(err.message)
+            }finally {
+                setLoading(false)
             }
         }
+
     };
 
     return (
@@ -141,7 +146,14 @@ const Signup = ({ navigation }) => {
 
                     <View style={form.field}>
                         <TouchableOpacity onPress={handleSubmit} style={form.button}>
-                            <Text style={form.buttonText}>Register</Text>
+                            {isLoading ?
+                                <View style={{
+                                    flex: 1,
+                                    justifyContent: "center",
+                                }}>
+                                    <ActivityIndicator size="large"
+                                                       color="white"/></View> :
+                                <Text style={form.buttonText}>Register</Text>}
                         </TouchableOpacity>
                     </View>
                 </ScrollView>

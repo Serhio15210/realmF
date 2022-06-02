@@ -11,11 +11,12 @@ export const DarkThemeStyles =  StyleSheet.create({
     },
     carouselText: {
         paddingLeft: 14,
-        color: 'white',
-        position: 'absolute',
-        bottom: -35,
-        left: 2,
-        fontWeight: 'bold',
+        color: "white",
+        width:200,
+        textAlign:'center',
+
+        fontWeight: "bold",
+        alignSelf:'center'
 
     },
     carouselIcon: {
@@ -56,10 +57,12 @@ export const DarkThemeStyles =  StyleSheet.create({
         justifyContent: 'flex-start',
     },
     carouselContainerView: {
-        width: '100%',
-        height: 400,
-        justifyContent: 'center',
-        alignItems: 'center',
+        width: "100%",
+        height: "100%",
+        justifyContent: "center",
+        alignItems: "center",
+        paddingTop:20,
+        paddingBottom:30
     },
     carousel: {
         flex: 1,
@@ -99,7 +102,9 @@ export const DarkThemeStyles =  StyleSheet.create({
 
     listTitle:{
         backgroundColor:'black',
-        flexDirection:"row",
+        flexDirection: "row",
+        justifyContent:'space-between',
+        padding:10
 
     },
     viewAll:{
@@ -125,16 +130,16 @@ export const DarkThemeStyles =  StyleSheet.create({
         backgroundColor:"#DAA520",height:"100%",width:48,borderRadius:8,borderTopLeftRadius:0,borderBottomLeftRadius:0,alignItems:'center',justifyContent:'center'
     },
     filmItemVoteViewText:{
-        color:"black"
+        color:"white"
     },
     filmItemText:{
         color: "white",
         fontSize: 18,
-        fontWeight: "500",
+        fontWeight: "bold",
         padding: 20,
         textAlign: "center",
+        alignSelf:'center'
     },
-
     findScreenFilter:{
         alignItems:"center",
         justifyContent:"space-between",
@@ -152,7 +157,7 @@ export const DarkThemeStyles =  StyleSheet.create({
         borderBottomWidth:2,
         borderRadius:10,
         height:50,
-        borderColor:"#DAA520"
+        borderColor:"black"
     },
     findScreenTitle:{
         color: '#DAA520', fontSize: 30,textAlign:"center"
@@ -174,7 +179,7 @@ export const DarkThemeStyles =  StyleSheet.create({
         borderRadius: 8,
         marginBottom: 40,
         borderWidth:2,
-        borderColor:"#DAA520",
+        borderColor:"black",
 
     },
     genreListText:{
@@ -237,8 +242,12 @@ export const DarkThemeStyles =  StyleSheet.create({
         color:"#DAA520",
         fontSize:25
     },
+    textInfoActors: {
+        color:'white',
+        fontSize: 15,
+    },
     similarFilms:{
-        marginRight: 20,width: 223,height: 270,borderWidth:2,borderRadius:5,backgroundColor:"#DAA520"
+        marginRight: 20, width: 200
     },
     images:{
         position: "absolute", height: 5, width: 200, backgroundColor: "#DAA520", opacity: 0.8
@@ -247,10 +256,10 @@ export const DarkThemeStyles =  StyleSheet.create({
         color:"#DAA520"
     },
     actorsFilms:{
-        marginRight: 20,width: 223,height: 270,borderWidth:2,borderRadius:5,backgroundColor:"#DAA520"
+        marginRight: 20, width: 200
     },
     detailCast:{
-        width: 132, marginRight: 10, borderWidth: 1, borderRadius: 5, borderColor: "#DAA520"
+        width: 132, marginRight: 10,  borderRadius: 5
     },
     detailReviews:{
         borderWidth: 2, backgroundColor: "#DAA520"
@@ -294,23 +303,23 @@ export const DarkThemeStyles =  StyleSheet.create({
     detailListDelButton:{
         borderWidth: 2,
         borderRadius: 10,
-        width: 50,
+        padding:5,
         alignItems: 'center',
         justifyContent: 'center',
-        marginLeft: "20%",
         borderColor: "#DAA520",
-        right:10,
+
 
     },
     detailListButtonsText:{
         color:'white'
+
     },
     detailListAddFilmButton:{
         alignItems: 'center',
         top: -20,
         borderWidth: 2,
         borderColor: '#DAA520',
-        width: 350,
+        width: 200,
         borderRadius: 10,
         height: 50,
         justifyContent: 'center', alignSelf: 'center'
@@ -322,6 +331,6 @@ export const DarkThemeStyles =  StyleSheet.create({
         width:250,height:50,padding:5,borderWidth:2, borderColor: "#DAA520",borderBottomLeftRadius:10,borderTopLeftRadius:10,color:'white'
     },
     editProfileContainer:{
-        flex:1,flexDirection:'row',justifyContent:'space-between',backgroundColor:'#333333'
+        flex:1, backgroundColor:'#333333'
     }
 })

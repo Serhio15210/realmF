@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { FlatList, SafeAreaView, Text, TextInput, TouchableWithoutFeedback, View } from "react-native";
+import {FlatList, ImageBackground, SafeAreaView, Text, TextInput, TouchableWithoutFeedback, View} from "react-native";
 
 
 
@@ -20,7 +20,8 @@ import FindButtons from "./FindButtoms";
 import DropdownScreen from "../../../components/DropdownScreen";
 import {useTheme} from "../../../providers/ThemeProvider";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
-
+import {DARK_BACKGROUND_IMG, DEFAULT_BACKGROUND_IMG} from "../../../Api/apiKey";
+import unknown from "../../../styles/unknown.jpg"
 
 
 const FindScreen = ({ navigation }) => {
@@ -51,24 +52,24 @@ const FindScreen = ({ navigation }) => {
   });
 
 
-  useEffect(async () => {
+  useEffect( () => {
 
     filter["movieIsOn"]&&movieQuery.length===0?
-      await GetFilms.getPremiereMovies(page).then((response) => {
+       GetFilms.getPremiereMovies(page).then((response) => {
       setState({ ...state, results: response.results });
 
-    }):await GetFindInfo.getFilmsByQuery(page,movieQuery).then((response) => {
+    }): GetFindInfo.getFilmsByQuery(page,movieQuery).then((response) => {
 
         setState({ ...state, results: response.results });
 
       });
 
     filter["serialIsOn"]&&serialQuery.length===0?
-    await GetSerials.getPopularSerials(page).then((response) => {
+     GetSerials.getPopularSerials(page).then((response) => {
       let results = response.results;
       setSerialState({ ...state, results: results });
 
-    }):await GetFindInfo.getSerialsByQuery(page,movieQuery).then((response) => {
+    }): GetFindInfo.getSerialsByQuery(page,movieQuery).then((response) => {
         let results = response.results;
         setSerialState({ ...state, results: results });
 
@@ -94,17 +95,8 @@ const FindScreen = ({ navigation }) => {
     )
   }
   return (
-    <SafeAreaView style={{
-      flex: 1,
-      height: "100%",
-      alignItems: "center",
-      justifyContent: "flex-start",
-      paddingHorizontal: 20,
-      backgroundColor: isDarkTheme ? "black" : "white",
-
-
-    }}>
-      <Text style={{ color: isDarkTheme ? "#DAA520" : "black", fontSize: 30 }}>MovieDb</Text>
+      <ImageBackground source={{ uri: !isDarkTheme ? DARK_BACKGROUND_IMG : DEFAULT_BACKGROUND_IMG  }} style={{...DefaultStyles.ImageBg,padding:20,alignItems:'center'}} blurRadius={10}>
+      <Text style={{ color: isDarkTheme ? "black" : "black", fontSize: 30 }}>MovieDb</Text>
       <TouchableWithoutFeedback onPress={() => setOpenTop(prev => !prev)}>
         <View style={{
           ...theme.findScreenFilter, ...{
@@ -116,10 +108,10 @@ const FindScreen = ({ navigation }) => {
 
           <Text style={{
             textAlign: "center",
-            fontSize: 25, color: isDarkTheme ? "#DAA520" : "black",
+            fontSize: 25, color: isDarkTheme ? "black" : "black",
           }}>Фильтр</Text>
           <FontAwesome5 name={openTop ? "sort-up" : "sort-down"}
-                        style={{ color: isDarkTheme ? "#DAA520" : "black", alignSelf: "center", fontSize: 25 }} />
+                        style={{ color: isDarkTheme ? "black" : "black", alignSelf: "center", fontSize: 25 }} />
         </View>
       </TouchableWithoutFeedback>
       <View style={{
@@ -131,7 +123,7 @@ const FindScreen = ({ navigation }) => {
         borderWidth: openTop ? 2 : 0,
         borderRadius: 10,
         borderTopWidth: 0,
-        borderColor: isDarkTheme ? "#DAA520" : "#DC143C",
+        borderColor: isDarkTheme ? "black" : "#DC143C",
         borderTopStartRadius: 0,
         borderTopEndRadius: 0,
         marginBottom: 15,
@@ -155,10 +147,10 @@ const FindScreen = ({ navigation }) => {
                      onChangeText={text => setMovieQuery(text)}
           >
           </TextInput>
-
+          {/*{state.results.map((item,index)=>renderItem(item,index))}*/}
           <FlatList data={state.results} ref={(ref) => {
             scrollPageRef = ref;
-          }}  renderItem={renderItem}
+          }}    keyExtractor={(item, index) => `key-${index}`}  renderItem={renderItem}
           ListFooterComponent={<FindButtons props={{TopButtonHandler:TopButtonHandler,BackButtonHandler:BackButtonHandler,page:page}}/>}/>
 
 
@@ -193,7 +185,7 @@ const FindScreen = ({ navigation }) => {
         </SafeAreaView>
       }
 
-    </SafeAreaView>
+      </ImageBackground>
   );
 };
 

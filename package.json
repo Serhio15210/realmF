@@ -17,6 +17,8 @@
     "@react-navigation/native": "^5.7.3",
     "@react-navigation/stack": "^5.9.2",
     "bson": "^4.6.1",
+    "mongodb": "^4.6.0",
+    "mongoose": "^6.3.4",
     "react": "16.13.1",
     "react-native": "0.64.1",
     "react-native-anchor-carousel": "^4.0.1",
@@ -30,8 +32,11 @@
     "react-native-safe-area-context": "^3.1.6",
     "react-native-screens": "^2.10.1",
     "react-native-vector-icons": "^9.1.0",
+    "react-native-webview": "^11.18.2",
+    "react-native-youtube-iframe": "^2.2.2",
     "react-navigation-tabs": "^2.11.2",
-    "realm": "^10.10.0"
+    "realm": "^10.10.0",
+    "util": "^0.12.4"
   },
   "devDependencies": {
     "@babel/core": "7.11.4",

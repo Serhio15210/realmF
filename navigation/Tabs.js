@@ -7,7 +7,7 @@ import {Text, View, TouchableOpacity} from "react-native";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 
 import {createStackNavigator} from "@react-navigation/stack";
-// import {createMaterialTopTabNavigator} from "react-navigation-tabs";
+
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 import {createDrawerNavigator} from "@react-navigation/drawer";
 import {DrawerContent} from "../pages/InfoMenu";
@@ -31,8 +31,14 @@ import Icon from "react-native-vector-icons/FontAwesome"
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import {useTheme} from "../providers/ThemeProvider";
 import HomeSerialsScreen from "../pages/MainPages/HomeSerialsScreen";
+import ListOfSerials from "../pages/Lists/ListOfSerials";
+import FindUsers from "../pages/Users/FindUsers";
+import UserInfo from "../pages/Users/UserInfo";
+import Subscribers from "../pages/Subscribers";
+import Subscriptions from "../pages/Subscriptions";
+import SubDetailList from "../pages/SubDetailList";
 const Tab = createBottomTabNavigator();
-// const TopTab = createMaterialTopTabNavigator();
+
 const Stack = createStackNavigator();
 const Draw = createDrawerNavigator();
 
@@ -60,7 +66,7 @@ const CustomTabButton = ({children, onPress, isDark}) => (
 
 export const Root=()=> {
     return (
-        <Stack.Navigator>
+        <Stack.Navigator >
 
             <Stack.Screen name="HomeScreen" component={HomeFilmsScreen} options={{headerShown: false}}/>
             <Stack.Screen name="HomeSerialsScreen" component={HomeSerialsScreen} options={{headerShown: false}}/>
@@ -68,14 +74,14 @@ export const Root=()=> {
                           options={({route}) => ({title: route.params.title})}
             />
             <Stack.Screen name="DetailFilm" component={DetailFilm}
-                          options={({route}) => ({title: route.params.title})}/>
+                          options={({route}) => ({title: route.params.title,id:route.params.id})}/>
             <Stack.Screen name="ActorsInfo" component={ActorsInfo}/>
 
             <Stack.Screen name="FilmsByFilter" component={FilmsByFilter}
                           options={({route}) => ({title: route.params.title})}/>
-            {/*<Stack.Screen name="ListOfSerials" component={ListOfSerials}*/}
-            {/*              options={({route}) => ({title: route.params.title})}*/}
-            {/*/>*/}
+            <Stack.Screen name="ListOfSerials" component={ListOfSerials}
+                          options={({route}) => ({title: route.params.title})}
+            />
 
             <Stack.Screen name="DetailSerial" component={DetailSerial}
                           options={({route}) => ({title: route.params.title})}/>
@@ -84,34 +90,63 @@ export const Root=()=> {
             <Stack.Screen name="AddList" component={AddList}/>
             <Stack.Screen name="MyLists" component={MyLists}/>
             <Stack.Screen name="MyListItem" component={MyListItem}/>
-            <Stack.Screen name="DetailList" component={DetailList}  options={({route}) => ({title: route.params.title})}/>
+
+
+            <Stack.Screen name="DetailList" component={DetailList}  options={({route}) => ({title: route.params.title,id:route.params.id})}/>
+
 
 
         </Stack.Navigator>
     );
 }
+export const Users=()=> {
+    return (
+        <Stack.Navigator >
 
-function SerialRoot() {
-  return (
-  <Stack.Navigator>
-    <Stack.Screen name="HomeSerialsScreen" component={TopTabs} options={{ headerShown: false }} />
+            <Stack.Screen name="FindUsers" component={FindUsers} options={{headerShown: false}}/>
 
-    {/*<Stack.Screen name="ListOfSerials" component={ListOfSerials} options={({ route }) => ({ title: route.params.title })}*/}
-    {/*/>*/}
-
-    <Stack.Screen name="DetailSerial" component={DetailSerial} options={({ route }) => ({ title: route.params.title })} />
-    <Stack.Screen name="TopLists" component={TopLists} />
-    <Stack.Screen name="ActorsInfo" component={ActorsInfo} />
-
-    <Stack.Screen name="FilmsByFilter" component={FilmsByFilter}
-                  options={({ route }) => ({ title: route.params.title })} />
-    {/*<Stack.Screen name="Find"component={FindScreen}/>*/}
-
-  </Stack.Navigator>
-  )    ;
-
-
+            <Stack.Screen name="UserInfo" component={UserInfo} options={({route}) => ({title: route.params.username,id:route.params.id})}/>
+            <Stack.Screen name="Subscribers" component={Subscribers} options={({route}) => ({id:route.params.id})} />
+            <Stack.Screen name="Subscriptions" component={Subscriptions} options={({route}) => ({id:route.params.id})} />
+            <Stack.Screen name="SubDetailList" component={SubDetailList}  options={({route}) => ({title: route.params.title,id:route.params.id})}/>
+        </Stack.Navigator>
+    );
 }
+export const ProfileStack=()=> {
+    return (
+        <Stack.Navigator initialRouteName="Profile">
+
+            <Stack.Screen name="Profile" component={Profile} options={{headerShown: false}}/>
+            <Stack.Screen name="UserInfo" component={UserInfo} options={({route}) => ({title: route.params.username,id:route.params.id})}/>
+            <Stack.Screen name="Subscribers" component={Subscribers} options={({route}) => ({id:route.params.id})} />
+            <Stack.Screen name="Subscriptions" component={Subscriptions} options={({route}) => ({id:route.params.id})} />
+            <Stack.Screen name="DetailList" component={DetailList}  options={({route}) => ({title: route.params.title,id:route.params.id})}/>
+
+            <Stack.Screen name="SubDetailList" component={SubDetailList}  options={({route}) => ({title: route.params.title,id:route.params.id})}/>
+        </Stack.Navigator>
+    );
+}
+// function SerialRoot() {
+//   return (
+//   <Stack.Navigator>
+//     <Stack.Screen name="HomeSerialsScreen" component={TopTabs} options={{ headerShown: false }} />
+//
+//     {/*<Stack.Screen name="ListOfSerials" component={ListOfSerials} options={({ route }) => ({ title: route.params.title })}*/}
+//     {/*/>*/}
+//
+//     <Stack.Screen name="DetailSerial" component={DetailSerial} options={({ route }) => ({ title: route.params.title })} />
+//     <Stack.Screen name="TopLists" component={TopLists} />
+//     <Stack.Screen name="ActorsInfo" component={ActorsInfo} />
+//
+//     <Stack.Screen name="FilmsByFilter" component={FilmsByFilter}
+//                   options={({ route }) => ({ title: route.params.title })} />
+//     {/*<Stack.Screen name="Find"component={FindScreen}/>*/}
+//
+//   </Stack.Navigator>
+//   )    ;
+//
+//
+// }
 
 function Find() {
     return (
@@ -147,11 +182,21 @@ export const Drawer = () => {
         </Draw.Navigator>
     );
 }
-// function TopTabs () {
+// export const TopTabs= ()=> {
+//     const {isDarkTheme} = useTheme();
 //   return (
-//     <TopTab.Navigator>
-//       <Tab.Screen name="Films" component={HomeFilmsScreen} />
-//       <Tab.Screen name="Serials" component={HomeSerialsScreen} />
+//     <TopTab.Navigator  >
+//         <TopTab.Screen name="Films" component={HomeFilmsScreen} options={{
+//
+//             tabBarLabel:({focused}) => (<Text style={{color:focused?'red':"black",fontWeight:'bold',fontSize:20}}>Films</Text>),
+//         }
+//         }
+//       />
+//       <TopTab.Screen name="Serials" component={HomeSerialsScreen} options={{
+//
+//           tabBarLabel:({focused}) => (<Text style={{color:focused?'red':"black",fontWeight:'bold',fontSize:20}}>Serials</Text>),
+//       }
+//       } />
 //     </TopTab.Navigator>
 //   );
 // }
@@ -258,7 +303,7 @@ export const Tabs = () => {
                     // navigation.dispatch(CommonActions.reset({index:1,routes:[{name:"HomeScreen"}]}))
                 },
             })}/>
-            <Tab.Screen name={"Friends"} component={Root} options={{
+            <Tab.Screen name={"Friends"} component={Users} options={{
                 // eslint-disable-next-line react/display-name
                 tabBarIcon: ({focused}) => (
                     <View
@@ -269,7 +314,7 @@ export const Tabs = () => {
                             width:100
 
                         }}>
-                        <FontAwesome5 name="comments" style={{
+                        <FontAwesome5 name="user-friends" style={{
                             width: 30,
                             height: 20,
                             textAlign: "center",
@@ -280,11 +325,11 @@ export const Tabs = () => {
                             color: !isDarkTheme ? focused ? "#DC143C" : "#748c94" : focused ? "#DAA520" : "#748c94",
                             fontSize: 11,
                             textAlign: "center",
-                        }}>ЧАТ</Text>
+                        }}>Пользователи</Text>
                     </View>
                 ),
             }}/>
-            <Tab.Screen name={"Profile"} component={Profile} options={{
+            <Tab.Screen name={"Profile"} component={ProfileStack} options={{
                 // eslint-disable-next-line react/display-name
                 tabBarIcon: ({focused}) => (
                     <View

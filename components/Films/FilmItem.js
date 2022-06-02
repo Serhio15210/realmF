@@ -2,36 +2,26 @@
 import React, {useContext} from 'react';
 import { Image, StyleSheet, Text, TouchableHighlight, TouchableOpacity, View } from "react-native";
 import {DefaultStyles} from "../../styles/defaultstyles";
-
-import {DarkThemeStyles} from "../../styles/darkstyles";
+import AntDesign from "react-native-vector-icons/AntDesign";
 import {IMG_URI} from "../../Api/apiKey";
 import {useTheme} from "../../providers/ThemeProvider";
-
-const FilmItem = ({item,navigation}) => {
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import {useNavigation} from "@react-navigation/native";
+import unknown from "../../styles/unknown.jpg"
+const FilmItem = ({item,isSerial}) => {
     const {isDarkTheme,screenTheme}=useTheme()
+    const navigation=useNavigation()
     const theme=screenTheme
     return (
-        <TouchableOpacity key={item.id} onPress={() => navigation.navigate("DetailFilm", {
+        <TouchableOpacity key={item.id} onPress={() => navigation.navigate(isSerial?"DetailSerial":"DetailFilm", {
             id: item.id,
-            navigation: navigation,title:item.original_title
-        })}  style={{width:350,justifyContent:'center',alignSelf:'center', }}>
-            <View key={item.imdbID} style={theme.filmItemView}>
+            title:isSerial?item.name:item.original_title,
+            navigation:navigation
+        })}  style={{alignSelf:'center',marginBottom:20}}>
+                <Image source={item.poster_path?{ uri: IMG_URI + item.poster_path }:unknown} style={screenTheme.carouselImage} />
 
-                <Image source={{uri: IMG_URI + item.poster_path}}
-                       style={{
-                           width: 80,
-                           height: 120,
-                         alignSelf:"flex-start",borderRadius:8,borderBottomRightRadius:0,borderTopRightRadius:0
-                       }} resizeMode="cover"/>
+            <Text style={screenTheme.carouselText}>{item.title}</Text>
 
-              <View style={{width:220,height:120,alignItems:"center",justifyContent:"center"}}>
-                <Text style={theme.filmItemText}>{item.title}</Text>
-              </View>
-              <View style={theme.filmItemVoteView}>
-                <Text  style={theme.filmItemVoteViewText}>{item.vote_average===0?"None":item.vote_average}</Text>
-              </View>
-
-            </View>
         </TouchableOpacity>
     );
 };

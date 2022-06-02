@@ -17,7 +17,7 @@ const EditProfile = ({isEdit,setIsEdit}) => {
             visible={isEdit}
         >
             <View style={screenTheme.editProfileContainer}>
-                <TouchableOpacity style={{width:50,height:50,alignContent:'center',justifyContent:'center'}}
+                <TouchableOpacity style={{position:'absolute',right:20,top:20}}
                 onPress={()=>{
                     setIsEdit(false)
                 }}>
@@ -26,7 +26,7 @@ const EditProfile = ({isEdit,setIsEdit}) => {
 
                 <View style={{alignItems: "center", // ignore this - we'll come back to it
                     justifyContent: "center", // ignore this - we'll come back to it
-                    flexDirection: "column",
+                    alignSelf:'center',
                 height:'100%'}}>
                     <TouchableOpacity style={{marginBottom:20}}>
                     <Image source={{uri: NONAME_IMG}}
@@ -55,19 +55,21 @@ const EditProfile = ({isEdit,setIsEdit}) => {
 
                     }} placeholder={`Enter a list name...`} textAlign="center" value={nameQuery}
                                onChangeText={text => setNameQuery(text)}/>}
+                    <TouchableOpacity style={{ alignContent:'center',justifyContent:'center',marginTop:20}}
+                                      onPress={async () => {
+                                          setIsLoading(true)
+                                          nameQuery!==userData.username&&await editUser(nameQuery)
+                                          setUserData({...userData, username: nameQuery})
+                                          setIsEdit(false)
+                                          setIsLoading(false)
+                                      }}>
+                        <Text style={{fontSize:25,color:isDarkTheme?'#DAA520':'white'}} >Save</Text>
+                    </TouchableOpacity>
                 </View>
 
-                <TouchableOpacity style={{width:50,height:50,alignContent:'center',justifyContent:'center'}}
-                                  onPress={async () => {
-                                      setIsLoading(true)
-                                      nameQuery!==userData.username&&await editUser(nameQuery)
-                                      setUserData({...userData, username: nameQuery})
-                                      setIsEdit(false)
-                                      setIsLoading(false)
-                                  }}>
-                    <Text style={{fontSize:20,color:isDarkTheme?'#DAA520':'white'}} >Save</Text>
-                </TouchableOpacity>
+
             </View>
+
         </Modal>
     );
 };
